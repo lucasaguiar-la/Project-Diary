@@ -21,7 +21,7 @@
             <a class="navbar-brand" href="../index.html"><i class="bi bi-journal-text"></i> Meu Diário</a>
         </div>
     </nav>
-
+bs
     <!-- Login Section -->
     <div id="app">
         <section class="py-5">
@@ -42,10 +42,6 @@
                                     <div class="mb-3">
                                         <label for="password" class="form-label">Senha</label>
                                         <input type="password" class="form-control" id="password" v-model="password" required>
-                                    </div>
-                                    <div class="mb-3 form-check">
-                                        <input type="checkbox" class="form-check-input" id="remember">
-                                        <label class="form-check-label" for="remember">Lembrar de mim</label>
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100">Entrar</button>
                                 </form>
@@ -72,48 +68,7 @@
         </div>
     </footer>
 
+    <script src="../scripts/login.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        new Vue({
-                el: '#app',
-                data: {
-                    email: '',
-                    password: '',
-                    errorMessage: ''
-                },
-                methods: {
-                    handleLogin() {
-                        this.errorMessage = '';
-                        const loginData = {
-                            email: this.email,
-                            password: this.password
-                        };
-
-                        fetch('http://localhost:8081/api/auth/signin', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(loginData)
-                        })
-                        .then(response => {
-                            if(!response.ok) {
-                                throw new Error('Credenciais inválidas.');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            localStorage.setItem('jwtToken', data.token);
-                            window.location.href = 'dashboard.html';
-                        })
-                        .catch(error => {
-                            this.errorMessage = 'Falha no login. Verifique seu e-mail e senha.';
-                            console.error('Erro no login:', error);
-                        });
-                    }
-                }
-            });
-    </script>
 </body>
 </html>
