@@ -1,30 +1,45 @@
 package com.meudiario.Diary.service;
 
+import com.meudiario.Diary.dto.LoginRequest;
+import com.meudiario.Diary.dto.RegisterRequest;
 import com.meudiario.Diary.model.User;
 import com.meudiario.Diary.repository.UserRepository;
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    @Lazy
-    private PasswordEncoder passwordEncoder;
+    public User register(RegisterRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("E-mail já cadastrado.");
+        }
+        User newUser = new User();
+        newUser.setFirstName(request.getFirstName());
+        newUser.setLastName(request.getLastName());
+        newUser.setEmail(request.getEmail());
+        // ATENÇÃO: Salvando senha como texto puro. Isso não é seguro para produção.
+        // A senha deve ser "hasheada" com um algoritmo como BCrypt.
+        newUser.setPassword(request.getPassword());
+        return userRepository.save(newUser);
+    }
 
-    public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+    public Optional<User> login(LoginRequest request) {
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            // ATENÇÃO: Comparação de senha em texto puro. Isso não é seguro.
+            if (user.getPassword().equals(request.getPassword())) {
+                return userOptional;
+            }
+        }
+        return Optional.empty();
     }
 
     public User findUser(int id) {
@@ -36,10 +51,5 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + username));
-    }
-
 }
+
