@@ -24,7 +24,7 @@ new Vue({
                 password: this.password
             };
 
-            fetch('http://localhost:8081/api/auth/signup', {
+            fetch('http://localhost:8081/api/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
