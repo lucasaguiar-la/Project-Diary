@@ -28,7 +28,7 @@ new Vue({
             })
             .then(data => {
                 localStorage.setItem('jwtToken', data.token);
-                window.location.href = 'dashboard.html';
+                window.location.href = 'notes.html';
             })
             .catch(error => {
                 this.errorMessage = 'Falha no login. Verifique seu e-mail e senha.';

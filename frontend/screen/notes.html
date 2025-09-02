@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Notas - Diário de Emoções</title>
+    <link rel="shortcut icon" href="../images/main-logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../style/index.css">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html"><i class="bi bi-journal-text"></i> Meu Diário</a>
+            <button class="btn btn-outline-danger" id="logout-button">Sair <i class="bi bi-box-arrow-right"></i></button>
+        </div>
+    </nav>
+
+    <!-- Notes Section -->
+    <div id="app" class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2 class="text-center mb-4">Meu Mural de Emoções</h2>
+
+                <!-- New Note Form -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Nova Anotação</h5>
+                        <form @submit.prevent="addNote">
+                            <div class="mb-3">
+                                <textarea class="form-control" style="height: 80px; max-height: 120px;" v-model="newNote.text" rows="3" placeholder="Como você está se sentindo hoje?" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Qual seu humor hoje?</label>
+                                <div class="d-flex justify-content-around">
+                                    <button type="button" class="btn btn-lg" :class="{'btn-outline-success': newNote.mood !== 'feliz', 'btn-success': newNote.mood === 'feliz'}" @click="newNote.mood = 'feliz'"><i class="bi bi-emoji-smile"></i></button>
+                                    <button type="button" class="btn btn-lg" :class="{'btn-outline-warning': newNote.mood !== 'neutro', 'btn-warning': newNote.mood === 'neutro'}" @click="newNote.mood = 'neutro'"><i class="bi bi-emoji-neutral"></i></button>
+                                    <button type="button" class="btn btn-lg" :class="{'btn-outline-danger': newNote.mood !== 'triste', 'btn-danger': newNote.mood === 'triste'}" @click="newNote.mood = 'triste'"><i class="bi bi-emoji-frown"></i></button>
+                                    <button type="button" class="btn btn-lg" :class="{'btn-outline-info': newNote.mood !== 'ansioso', 'btn-info': newNote.mood === 'ansioso'}" @click="newNote.mood = 'ansioso'"><i class="bi bi-emoji-grimace"></i></button>
+                                    <button type="button" class="btn btn-lg" :class="{'btn-outline-primary': newNote.mood !== 'calmo', 'btn-primary': newNote.mood === 'calmo'}" @click="newNote.mood = 'calmo'"><i class="bi bi-emoji-sunglasses"></i></button>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Salvar Nota</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Display Notes -->
+                <h3 class="text-center mb-3">Suas Memórias</h3>
+                <div v-if="notes.length === 0" class="text-center text-muted">
+                    <p>Você ainda não tem nenhuma nota. Comece a escrever!</p>
+                </div>
+                <div class="list-group">
+                    <div v-for="note in sortedNotes" :key="note.id" class="list-group-item list-group-item-action flex-column align-items-start mb-2 shadow-sm">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ getMoodIcon(note.mood) }} {{ note.mood | capitalize }}</h5>
+                            <small>{{ note.date }}</small>
+                        </div>
+                        <p class="mb-1">{{ note.text }}</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="text-center">
+                    <p class="mb-0">LucasAguiar&copy;2025</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
