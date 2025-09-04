@@ -22,7 +22,7 @@ public class NoteController {
     public ResponseEntity<NotesForm> createNote(@RequestBody NoteRequest noteRequest) {
 
         NotesForm savedNote = noteService.saveNote(noteRequest);
-        
+
         return new ResponseEntity<>(savedNote, HttpStatus.CREATED);
 
     }

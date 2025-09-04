@@ -33,7 +33,7 @@
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
                         <h5 class="card-title">Nova Anotação</h5>
-                        <form @submit.prevent="addNote">
+                        <form @submit.prevent="addNote" id="note-form">
 
                             <div class="mb-3">
                                 <textarea class="form-control" style="height: 80px; max-height: 120px;" v-model="newNote.text" rows="3" placeholder="Como você está se sentindo hoje?" required></textarea>
