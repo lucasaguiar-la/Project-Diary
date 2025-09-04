@@ -34,20 +34,29 @@
                     <div class="card-body">
                         <h5 class="card-title">Nova Anotação</h5>
                         <form @submit.prevent="addNote">
+
                             <div class="mb-3">
                                 <textarea class="form-control" style="height: 80px; max-height: 120px;" v-model="newNote.text" rows="3" placeholder="Como você está se sentindo hoje?" required></textarea>
                             </div>
+
                             <div class="mb-3">
                                 <label class="form-label">Qual seu humor hoje?</label>
                                 <div class="d-flex justify-content-around">
+
+                                    <!-- Emoji feliz -->
                                     <button type="button" class="btn btn-lg" :class="{'btn-outline-success': newNote.mood !== 'feliz', 'btn-success': newNote.mood === 'feliz'}" @click="newNote.mood = 'feliz'"><i class="bi bi-emoji-smile"></i></button>
+                                    <!-- Emoji neutro -->
                                     <button type="button" class="btn btn-lg" :class="{'btn-outline-warning': newNote.mood !== 'neutro', 'btn-warning': newNote.mood === 'neutro'}" @click="newNote.mood = 'neutro'"><i class="bi bi-emoji-neutral"></i></button>
+                                    <!-- Emoji triste -->
                                     <button type="button" class="btn btn-lg" :class="{'btn-outline-danger': newNote.mood !== 'triste', 'btn-danger': newNote.mood === 'triste'}" @click="newNote.mood = 'triste'"><i class="bi bi-emoji-frown"></i></button>
-                                    <button type="button" class="btn btn-lg" :class="{'btn-outline-info': newNote.mood !== 'ansioso', 'btn-info': newNote.mood === 'ansioso'}" @click="newNote.mood = 'ansioso'"><i class="bi bi-emoji-grimace"></i></button>
+                                    <!-- Emoji tranquilo -->
                                     <button type="button" class="btn btn-lg" :class="{'btn-outline-primary': newNote.mood !== 'calmo', 'btn-primary': newNote.mood === 'calmo'}" @click="newNote.mood = 'calmo'"><i class="bi bi-emoji-sunglasses"></i></button>
+
                                 </div>
                             </div>
+
                             <button type="submit" class="btn btn-primary w-100">Salvar Nota</button>
+
                         </form>
                     </div>
                 </div>
@@ -57,6 +66,7 @@
                 <div v-if="notes.length === 0" class="text-center text-muted">
                     <p>Você ainda não tem nenhuma nota. Comece a escrever!</p>
                 </div>
+
                 <div class="list-group">
                     <div v-for="note in sortedNotes" :key="note.id" class="list-group-item list-group-item-action flex-column align-items-start mb-2 shadow-sm">
                         <div class="d-flex w-100 justify-content-between">

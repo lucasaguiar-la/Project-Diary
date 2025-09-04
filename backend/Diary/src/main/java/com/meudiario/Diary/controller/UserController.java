@@ -34,6 +34,7 @@ public class UserController {
         if (userOptional.isPresent()) {
             return ResponseEntity.ok(userOptional.get());
         }
-        return ResponseEntity.status(401).build(); // Unauthorized
+        return ResponseEntity.status(401).build();
     }
+
 }
