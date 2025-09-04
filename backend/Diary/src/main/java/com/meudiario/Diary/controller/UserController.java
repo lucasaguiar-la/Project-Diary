@@ -24,17 +24,23 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+
         User user = userService.register(request);
+
         return ResponseEntity.ok(user);
+
     }
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody LoginRequest request) {
+
         Optional<User> userOptional = userService.login(request);
         if (userOptional.isPresent()) {
             return ResponseEntity.ok(userOptional.get());
         }
+
         return ResponseEntity.status(401).build();
+
     }
 
 }
