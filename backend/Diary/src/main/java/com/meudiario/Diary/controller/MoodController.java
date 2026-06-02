@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/moods")
+@CrossOrigin(origins = "*")
 public class MoodController {
 
     @Autowired
