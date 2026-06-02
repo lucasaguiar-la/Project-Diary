@@ -2,7 +2,8 @@ new Vue({
     el: '#app',
     data: {
         history: [],
-        userId: null
+        userId: null,
+        errorMessage: ''
     },
     created() {
         this.userId = localStorage.getItem('userId');
@@ -25,15 +26,28 @@ new Vue({
                 'Authorization': `Bearer ${token}`
             };
         },
+        handleFetch(res) {
+            if (res.status === 401) {
+                localStorage.removeItem('jwtToken');
+                localStorage.removeItem('userId');
+                window.location.href = 'login.html';
+                throw new Error('Sessao expirada.');
+            }
+            if (!res.ok) {
+                throw new Error('Erro no servidor. Tente novamente.');
+            }
+            return res;
+        },
         loadHistory() {
             fetch(`/api/moods/user/${this.userId}`, {
                 headers: this.getAuthHeaders()
             })
+            .then(res => this.handleFetch(res))
             .then(res => res.json())
             .then(data => {
                 this.history = data;
             })
-            .catch(err => console.error('Erro ao carregar histórico:', err));
+            .catch(err => { this.errorMessage = err.message; });
         },
         formatDate(dateStr) {
             if (!dateStr) return '';

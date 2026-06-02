@@ -32,6 +32,11 @@
             <div class="col-md-8">
                 <h2 class="text-center mb-4">Meu Mural de Emoções</h2>
 
+                <div v-if="errorMessage" class="alert alert-danger alert-dismissible mb-3" role="alert">
+                    {{ errorMessage }}
+                    <button type="button" class="btn-close" @click="errorMessage = ''"></button>
+                </div>
+
                 <!-- New Note Form -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">

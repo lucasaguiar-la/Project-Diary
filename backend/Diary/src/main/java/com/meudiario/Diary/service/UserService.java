@@ -3,6 +3,7 @@ package com.meudiario.Diary.service;
 import com.meudiario.Diary.dto.LoginRequest;
 import com.meudiario.Diary.dto.LoginResponse;
 import com.meudiario.Diary.dto.RegisterRequest;
+import com.meudiario.Diary.dto.RegisterResponse;
 import com.meudiario.Diary.model.User;
 import com.meudiario.Diary.repository.UserRepository;
 import com.meudiario.Diary.util.JwtUtil;
@@ -24,7 +25,7 @@ public class UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public User register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("E-mail já cadastrado.");
         }
@@ -33,7 +34,8 @@ public class UserService {
         newUser.setLastName(request.getLastName());
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        return userRepository.save(newUser);
+        User saved = userRepository.save(newUser);
+        return new RegisterResponse(saved.getId(), saved.getFirstName(), saved.getLastName());
     }
 
     public LoginResponse login(LoginRequest request) {

@@ -9,7 +9,8 @@ new Vue({
         moodTagsMap: {},
         userId: null,
         editingId: null,
-        editContent: ''
+        editContent: '',
+        errorMessage: ''
     },
     created() {
         this.userId = localStorage.getItem('userId');
@@ -33,27 +34,41 @@ new Vue({
                 'Authorization': `Bearer ${token}`
             };
         },
+        handleFetch(res) {
+            if (res.status === 401) {
+                localStorage.removeItem('jwtToken');
+                localStorage.removeItem('userId');
+                window.location.href = 'login.html';
+                throw new Error('Sessao expirada.');
+            }
+            if (!res.ok) {
+                throw new Error('Erro no servidor. Tente novamente.');
+            }
+            return res;
+        },
         loadMoods() {
             fetch(`/api/moods`, {
                 headers: this.getAuthHeaders()
             })
+            .then(res => this.handleFetch(res))
             .then(res => res.json())
             .then(moods => {
                 moods.forEach(m => {
                     this.moodTagsMap[m.title] = m.id;
                 });
             })
-            .catch(err => console.error('Erro ao carregar moods:', err));
+            .catch(err => { this.errorMessage = err.message; });
         },
         loadNotes() {
             fetch(`/api/notes/user/${this.userId}`, {
                 headers: this.getAuthHeaders()
             })
+            .then(res => this.handleFetch(res))
             .then(res => res.json())
             .then(notes => {
                 this.notes = notes;
             })
-            .catch(err => console.error('Erro ao carregar notas:', err));
+            .catch(err => { this.errorMessage = err.message; });
         },
         addNote() {
             if (!this.newNote.text) return;
@@ -71,13 +86,14 @@ new Vue({
                 headers: this.getAuthHeaders(),
                 body: JSON.stringify(payload)
             })
+            .then(res => this.handleFetch(res))
             .then(res => res.json())
             .then(savedNote => {
                 this.notes.push(savedNote);
                 this.newNote.text = '';
                 this.newNote.mood = 'neutro';
             })
-            .catch(err => console.error('Erro ao salvar nota:', err));
+            .catch(err => { this.errorMessage = err.message; });
         },
         formatDate(dateStr) {
             if (!dateStr) return '';
@@ -104,12 +120,13 @@ new Vue({
                 headers: this.getAuthHeaders(),
                 body: JSON.stringify({ title: note.title, content: this.editContent })
             })
+            .then(res => this.handleFetch(res))
             .then(res => res.json())
             .then(updated => {
                 note.content = updated.content;
                 this.cancelEdit();
             })
-            .catch(err => console.error('Erro ao editar nota:', err));
+            .catch(err => { this.errorMessage = err.message; });
         },
         deleteNote(id) {
             if (!confirm('Deseja excluir esta nota?')) return;
@@ -117,10 +134,11 @@ new Vue({
                 method: 'DELETE',
                 headers: this.getAuthHeaders()
             })
+            .then(res => this.handleFetch(res))
             .then(() => {
                 this.notes = this.notes.filter(n => n.id !== id);
             })
-            .catch(err => console.error('Erro ao excluir nota:', err));
+            .catch(err => { this.errorMessage = err.message; });
         }
     }
 });

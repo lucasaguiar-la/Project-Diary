@@ -3,7 +3,7 @@ package com.meudiario.Diary.controller;
 import com.meudiario.Diary.dto.LoginRequest;
 import com.meudiario.Diary.dto.LoginResponse;
 import com.meudiario.Diary.dto.RegisterRequest;
-import com.meudiario.Diary.model.User;
+import com.meudiario.Diary.dto.RegisterResponse;
 import com.meudiario.Diary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(userService.register(request));
     }
 
