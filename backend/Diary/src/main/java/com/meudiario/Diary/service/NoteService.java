@@ -8,6 +8,8 @@ import com.meudiario.Diary.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class NoteService {
 
@@ -29,6 +31,12 @@ public class NoteService {
         newNote.setUser(user);
 
         return noteRepository.save(newNote);
+    }
+
+    public List<NotesForm> getNotesByUser(int userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o id: " + userId));
+        return noteRepository.findByUser_Id(userId);
     }
 
 }

@@ -6,10 +6,9 @@ import com.meudiario.Diary.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -20,11 +19,13 @@ public class NoteController {
 
     @PostMapping
     public ResponseEntity<NotesForm> createNote(@RequestBody NoteRequest noteRequest) {
-
         NotesForm savedNote = noteService.saveNote(noteRequest);
-
         return new ResponseEntity<>(savedNote, HttpStatus.CREATED);
+    }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<NotesForm>> getNotesByUser(@PathVariable int userId) {
+        return ResponseEntity.ok(noteService.getNotesByUser(userId));
     }
 
 }

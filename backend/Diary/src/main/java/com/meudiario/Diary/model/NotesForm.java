@@ -1,5 +1,6 @@
 package com.meudiario.Diary.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class NotesForm {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -32,6 +34,7 @@ public class NotesForm {
     public NotesForm() {
     }
 
+    @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
