@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -30,6 +32,14 @@ public class NotesForm {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "note_moods",
+            joinColumns = @JoinColumn(name = "note_id"),
+            inverseJoinColumns = @JoinColumn(name = "mood_id")
+    )
+    private List<MoodTag> moods = new ArrayList<>();
 
     public NotesForm() {
     }

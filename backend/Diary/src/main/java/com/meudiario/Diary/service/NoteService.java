@@ -4,6 +4,7 @@ import com.meudiario.Diary.dto.NoteRequest;
 import com.meudiario.Diary.dto.NoteUpdateRequest;
 import com.meudiario.Diary.model.NotesForm;
 import com.meudiario.Diary.model.User;
+import com.meudiario.Diary.repository.MoodTagRepository;
 import com.meudiario.Diary.repository.NoteRepository;
 import com.meudiario.Diary.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class NoteService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MoodTagRepository moodTagRepository;
+
     public NotesForm saveNote(NoteRequest noteRequest) {
 
         User user = userRepository.findById(Math.toIntExact(noteRequest.getUserId()))
@@ -30,6 +34,10 @@ public class NoteService {
         newNote.setTitle(noteRequest.getTitle());
         newNote.setContent(noteRequest.getContent());
         newNote.setUser(user);
+
+        if (noteRequest.getMoodIds() != null && !noteRequest.getMoodIds().isEmpty()) {
+            newNote.setMoods(moodTagRepository.findAllById(noteRequest.getMoodIds()));
+        }
 
         return noteRepository.save(newNote);
     }
