@@ -1,3 +1,5 @@
+const BASE_URL = 'http://localhost:8081';
+
 new Vue({
     el: '#app',
     data: {
@@ -5,28 +7,18 @@ new Vue({
             text: '',
             mood: 'neutro'
         },
-        notes: [
-            {
-                id: 1,
-                text: 'Tive um dia produtivo e consegui resolver um bug complicado. Estou me sentindo ótimo!',
-                mood: 'feliz',
-                date: '2 de Setembro de 2025'
-            },
-            {
-                id: 2,
-                text: 'A reunião de hoje foi um pouco longa e cansativa. Nada de especial aconteceu.',
-                mood: 'neutro',
-                date: '1 de Setembro de 2025'
-            }
-        ],
-        nextNoteId: 3
+        notes: [],
+        moodTagsMap: {},
+        userId: null
     },
-    filters: {
-        capitalize: function (value) {
-            if (!value) return ''
-            value = value.toString()
-            return value.charAt(0).toUpperCase() + value.slice(1)
+    created() {
+        this.userId = localStorage.getItem('userId');
+        if (!this.userId) {
+            window.location.href = 'login.html';
+            return;
         }
+        this.loadMoods();
+        this.loadNotes();
     },
     computed: {
         sortedNotes() {
@@ -34,33 +26,75 @@ new Vue({
         }
     },
     methods: {
+        getAuthHeaders() {
+            const token = localStorage.getItem('jwtToken');
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+        },
+        loadMoods() {
+            fetch(`${BASE_URL}/api/moods`, {
+                headers: this.getAuthHeaders()
+            })
+            .then(res => res.json())
+            .then(moods => {
+                moods.forEach(m => {
+                    this.moodTagsMap[m.title] = m.id;
+                });
+            })
+            .catch(err => console.error('Erro ao carregar moods:', err));
+        },
+        loadNotes() {
+            fetch(`${BASE_URL}/api/notes/user/${this.userId}`, {
+                headers: this.getAuthHeaders()
+            })
+            .then(res => res.json())
+            .then(notes => {
+                this.notes = notes;
+            })
+            .catch(err => console.error('Erro ao carregar notas:', err));
+        },
         addNote() {
             if (!this.newNote.text) return;
 
-            this.notes.push({
-                id: this.nextNoteId++,
-                text: this.newNote.text,
-                mood: this.newNote.mood,
-                date: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })
-            });
+            const moodId = this.moodTagsMap[this.newNote.mood];
+            const payload = {
+                title: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' }),
+                content: this.newNote.text,
+                userId: parseInt(this.userId),
+                moodIds: moodId ? [moodId] : []
+            };
 
-            this.newNote.text = '';
-            this.newNote.mood = 'neutro';
+            fetch(`${BASE_URL}/api/notes`, {
+                method: 'POST',
+                headers: this.getAuthHeaders(),
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(savedNote => {
+                this.notes.push(savedNote);
+                this.newNote.text = '';
+                this.newNote.mood = 'neutro';
+            })
+            .catch(err => console.error('Erro ao salvar nota:', err));
         },
-        getMoodIcon(mood) {
-            switch (mood) {
-                case 'feliz': return '😊';
-                case 'neutro': return '😐';
-                case 'triste': return '😢';
-                case 'ansioso': return '😟';
-                case 'calmo': return '😌';
-                default: return '🤔';
+        formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+        },
+        getMoodDisplay(note) {
+            if (note.moods && note.moods.length > 0) {
+                return note.moods[0].emoji + ' ' + note.moods[0].title;
             }
+            return '🤔 Sem humor';
         }
     }
 });
 
 document.getElementById('logout-button').addEventListener('click', () => {
-    alert('Você foi desconectado.');
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('userId');
     window.location.href = 'login.html';
 });

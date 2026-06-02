@@ -70,10 +70,10 @@
                 <div class="list-group">
                     <div v-for="note in sortedNotes" :key="note.id" class="list-group-item list-group-item-action flex-column align-items-start mb-2 shadow-sm">
                         <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{ getMoodIcon(note.mood) }} {{ note.mood | capitalize }}</h5>
-                            <small>{{ note.date }}</small>
+                            <h5 class="mb-1">{{ getMoodDisplay(note) }}</h5>
+                            <small>{{ formatDate(note.createdAt) }}</small>
                         </div>
-                        <p class="mb-1">{{ note.text }}</p>
+                        <p class="mb-1">{{ note.content }}</p>
                     </div>
                 </div>
 

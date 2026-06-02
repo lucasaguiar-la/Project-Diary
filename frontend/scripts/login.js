@@ -28,6 +28,7 @@ new Vue({
             })
             .then(data => {
                 localStorage.setItem('jwtToken', data.token);
+                localStorage.setItem('userId', data.userId);
                 window.location.href = 'notes.html';
             })
             .catch(error => {
