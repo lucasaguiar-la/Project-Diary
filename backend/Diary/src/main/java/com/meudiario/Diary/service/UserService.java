@@ -5,6 +5,7 @@ import com.meudiario.Diary.dto.RegisterRequest;
 import com.meudiario.Diary.model.User;
 import com.meudiario.Diary.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public User register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("E-mail já cadastrado.");
@@ -24,9 +28,7 @@ public class UserService {
         newUser.setFirstName(request.getFirstName());
         newUser.setLastName(request.getLastName());
         newUser.setEmail(request.getEmail());
-        // ATENÇÃO: Salvando senha como texto puro. Isso não é seguro para produção.
-        // A senha deve ser "hasheada" com um algoritmo como BCrypt.
-        newUser.setPassword(request.getPassword());
+        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         return userRepository.save(newUser);
     }
 
@@ -34,8 +36,7 @@ public class UserService {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            // ATENÇÃO: Comparação de senha em texto puro. Isso não é seguro.
-            if (user.getPassword().equals(request.getPassword())) {
+            if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 return userOptional;
             }
         }
