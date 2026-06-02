@@ -1,15 +1,16 @@
 package com.meudiario.Diary.service;
 
 import com.meudiario.Diary.dto.LoginRequest;
+import com.meudiario.Diary.dto.LoginResponse;
 import com.meudiario.Diary.dto.RegisterRequest;
 import com.meudiario.Diary.model.User;
 import com.meudiario.Diary.repository.UserRepository;
+import com.meudiario.Diary.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -19,6 +20,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public User register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -32,15 +36,14 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    public Optional<User> login(LoginRequest request) {
-        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-                return userOptional;
-            }
+    public LoginResponse login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Credenciais inválidas."));
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Credenciais inválidas.");
         }
-        return Optional.empty();
+        String token = jwtUtil.generateToken(user);
+        return new LoginResponse(token, user.getId(), user.getFirstName(), user.getLastName());
     }
 
     public User findUser(int id) {
