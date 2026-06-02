@@ -7,7 +7,9 @@ new Vue({
         },
         notes: [],
         moodTagsMap: {},
-        userId: null
+        userId: null,
+        editingId: null,
+        editContent: ''
     },
     created() {
         this.userId = localStorage.getItem('userId');
@@ -87,6 +89,38 @@ new Vue({
                 return note.moods[0].emoji + ' ' + note.moods[0].title;
             }
             return '🤔 Sem humor';
+        },
+        startEdit(note) {
+            this.editingId = note.id;
+            this.editContent = note.content;
+        },
+        cancelEdit() {
+            this.editingId = null;
+            this.editContent = '';
+        },
+        saveEdit(note) {
+            fetch(`/api/notes/${note.id}`, {
+                method: 'PUT',
+                headers: this.getAuthHeaders(),
+                body: JSON.stringify({ title: note.title, content: this.editContent })
+            })
+            .then(res => res.json())
+            .then(updated => {
+                note.content = updated.content;
+                this.cancelEdit();
+            })
+            .catch(err => console.error('Erro ao editar nota:', err));
+        },
+        deleteNote(id) {
+            if (!confirm('Deseja excluir esta nota?')) return;
+            fetch(`/api/notes/${id}`, {
+                method: 'DELETE',
+                headers: this.getAuthHeaders()
+            })
+            .then(() => {
+                this.notes = this.notes.filter(n => n.id !== id);
+            })
+            .catch(err => console.error('Erro ao excluir nota:', err));
         }
     }
 });
