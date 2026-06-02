@@ -1,6 +1,7 @@
 package com.meudiario.Diary.service;
 
 import com.meudiario.Diary.dto.NoteRequest;
+import com.meudiario.Diary.dto.NoteUpdateRequest;
 import com.meudiario.Diary.model.NotesForm;
 import com.meudiario.Diary.model.User;
 import com.meudiario.Diary.repository.NoteRepository;
@@ -37,6 +38,26 @@ public class NoteService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o id: " + userId));
         return noteRepository.findByUser_Id(userId);
+    }
+
+    public NotesForm getNoteById(Long id) {
+        return noteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Nota não encontrada com o id: " + id));
+    }
+
+    public NotesForm updateNote(Long id, NoteUpdateRequest request) {
+        NotesForm note = noteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Nota não encontrada com o id: " + id));
+        note.setTitle(request.getTitle());
+        note.setContent(request.getContent());
+        return noteRepository.save(note);
+    }
+
+    public void deleteNote(Long id) {
+        if (!noteRepository.existsById(id)) {
+            throw new RuntimeException("Nota não encontrada com o id: " + id);
+        }
+        noteRepository.deleteById(id);
     }
 
 }

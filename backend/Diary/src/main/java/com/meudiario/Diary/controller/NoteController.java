@@ -1,6 +1,7 @@
 package com.meudiario.Diary.controller;
 
 import com.meudiario.Diary.dto.NoteRequest;
+import com.meudiario.Diary.dto.NoteUpdateRequest;
 import com.meudiario.Diary.model.NotesForm;
 import com.meudiario.Diary.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,25 @@ public class NoteController {
         return new ResponseEntity<>(savedNote, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<NotesForm>> getNotesByUser(@PathVariable int userId) {
         return ResponseEntity.ok(noteService.getNotesByUser(userId));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<NotesForm> getNoteById(@PathVariable Long id) {
+        return ResponseEntity.ok(noteService.getNoteById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<NotesForm> updateNote(@PathVariable Long id, @RequestBody NoteUpdateRequest request) {
+        return ResponseEntity.ok(noteService.updateNote(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNote(@PathVariable Long id) {
+        noteService.deleteNote(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
