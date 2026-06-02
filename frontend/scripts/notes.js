@@ -1,5 +1,3 @@
-const BASE_URL = 'http://localhost:8081';
-
 new Vue({
     el: '#app',
     data: {
@@ -34,7 +32,7 @@ new Vue({
             };
         },
         loadMoods() {
-            fetch(`${BASE_URL}/api/moods`, {
+            fetch(`/api/moods`, {
                 headers: this.getAuthHeaders()
             })
             .then(res => res.json())
@@ -46,7 +44,7 @@ new Vue({
             .catch(err => console.error('Erro ao carregar moods:', err));
         },
         loadNotes() {
-            fetch(`${BASE_URL}/api/notes/user/${this.userId}`, {
+            fetch(`/api/notes/user/${this.userId}`, {
                 headers: this.getAuthHeaders()
             })
             .then(res => res.json())
@@ -66,7 +64,7 @@ new Vue({
                 moodIds: moodId ? [moodId] : []
             };
 
-            fetch(`${BASE_URL}/api/notes`, {
+            fetch(`/api/notes`, {
                 method: 'POST',
                 headers: this.getAuthHeaders(),
                 body: JSON.stringify(payload)

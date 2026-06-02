@@ -13,7 +13,7 @@ new Vue({
                 password: this.password
             };
 
-            fetch('http://localhost:8081/api/users/login', {
+            fetch('/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
