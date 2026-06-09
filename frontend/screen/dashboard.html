@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Diário de Emoções</title>
+    <link rel="shortcut icon" href="../images/main-logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../style/index.css">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html"><i class="bi bi-journal-text"></i> Meu Diário</a>
+            <div class="d-flex gap-2">
+                <a href="notes.html" class="btn btn-outline-secondary">Notas <i class="bi bi-journal-text"></i></a>
+                <a href="mood-history.html" class="btn btn-outline-secondary">Humor <i class="bi bi-graph-up"></i></a>
+                <a href="agenda.html" class="btn btn-outline-secondary">Agenda <i class="bi bi-calendar3"></i></a>
+                <button class="btn btn-outline-danger" id="logout-button">Sair <i class="bi bi-box-arrow-right"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <div id="app" class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2 class="text-center mb-4">Dashboard</h2>
+
+                <div v-if="errorMessage" class="alert alert-danger alert-dismissible mb-3" role="alert">
+                    {{ errorMessage }}
+                    <button type="button" class="btn-close" @click="errorMessage = ''"></button>
+                </div>
+
+                <!-- Streak Card -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-3">Seu Ofensivo</h5>
+                        <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
+                            <i class="bi bi-fire" style="font-size: 2.5rem; color: #fd7e14;"></i>
+                            <span class="display-4 fw-bold text-success">{{ streak }}</span>
+                            <span class="text-muted fs-5">{{ streak === 1 ? 'dia' : 'dias' }}</span>
+                        </div>
+                        <p class="text-muted mb-3">{{ incentiveMessage }}</p>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                 :style="{ width: dayProgress + '%' }"
+                                 :aria-valuenow="dayProgress" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted mt-1 d-block">{{ completedToday }} de {{ activities.length }} atividades concluídas hoje</small>
+                    </div>
+                </div>
+
+                <!-- Activities Today -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Atividades de Hoje</h5>
+
+                        <div v-if="activities.length === 0" class="text-center text-muted py-3">
+                            <i class="bi bi-clipboard" style="font-size: 2rem;"></i>
+                            <p class="mt-2 mb-0">Nenhuma atividade cadastrada ainda.</p>
+                        </div>
+
+                        <div class="list-group list-group-flush">
+                            <div v-for="activity in activities" :key="activity.id"
+                                 class="list-group-item d-flex align-items-center justify-content-between px-0">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i :class="activity.completedToday ? 'bi bi-check-circle-fill text-success' : 'bi bi-circle text-secondary'"
+                                       style="font-size: 1.25rem;"></i>
+                                    <span :class="activity.completedToday ? 'text-decoration-line-through text-muted' : ''">
+                                        {{ activity.title }}
+                                    </span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button @click="toggleActivity(activity)"
+                                            :class="activity.completedToday ? 'btn btn-sm btn-success' : 'btn btn-sm btn-outline-secondary'">
+                                        {{ activity.completedToday ? 'Feito' : 'Marcar' }}
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" @click="deleteActivity(activity.id)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Activity -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Nova Atividade</h5>
+                        <form @submit.prevent="addActivity" class="d-flex gap-2">
+                            <input type="text" class="form-control" v-model="newActivityTitle"
+                                   placeholder="Ex: Meditar, Exercício, Leitura..." required>
+                            <button type="submit" class="btn btn-primary text-nowrap">
+                                <i class="bi bi-plus-lg"></i> Adicionar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="text-center">
+                    <p class="mb-0">LucasAguiar&copy;2025</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

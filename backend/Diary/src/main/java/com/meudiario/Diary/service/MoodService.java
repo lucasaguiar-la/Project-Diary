@@ -27,10 +27,16 @@ public class MoodService {
     }
 
     public List<MoodHistoryResponse> getMoodHistory(int userId) {
+        return getMoodHistory(userId, null, null);
+    }
+
+    public List<MoodHistoryResponse> getMoodHistory(int userId, Integer year, Integer month) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o id: " + userId));
         return noteRepository.findByUser_Id(userId).stream()
                 .filter(note -> !note.getMoods().isEmpty())
+                .filter(note -> year == null || note.getCreatedAt().getYear() == year)
+                .filter(note -> month == null || note.getCreatedAt().getMonthValue() == month)
                 .map(note -> new MoodHistoryResponse(note.getId(), note.getTitle(), note.getCreatedAt(), note.getMoods()))
                 .toList();
     }

@@ -23,7 +23,10 @@ public class MoodController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<MoodHistoryResponse>> getMoodHistory(@PathVariable int userId) {
-        return ResponseEntity.ok(moodService.getMoodHistory(userId));
+    public ResponseEntity<List<MoodHistoryResponse>> getMoodHistory(
+            @PathVariable int userId,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month) {
+        return ResponseEntity.ok(moodService.getMoodHistory(userId, year, month));
     }
 }

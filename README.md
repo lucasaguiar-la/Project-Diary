@@ -171,6 +171,46 @@ O token é obtido no login e armazenado no `localStorage` pelo frontend.
 |---|---|---|
 | GET | `/api/moods` | Listar moods disponíveis |
 | GET | `/api/moods/user/{userId}` | Histórico de moods do usuário |
+| GET | `/api/moods/user/{userId}?year=YYYY&month=MM` | Moods filtrados por mês |
+
+### Atividades (Dashboard)
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/api/activities/user/{userId}` | Listar atividades com status do dia |
+| POST | `/api/activities` | Cadastrar nova atividade |
+| DELETE | `/api/activities/{id}` | Remover atividade |
+| POST | `/api/activities/{id}/complete?userId={userId}` | Marcar atividade como concluída hoje |
+| DELETE | `/api/activities/{id}/complete/today?userId={userId}` | Desmarcar conclusão de hoje |
+| GET | `/api/activities/user/{userId}/streak` | Retornar streak atual (dias consecutivos) |
+
+**Cadastrar atividade - corpo:**
+```json
+{
+  "title": "Meditar",
+  "userId": 1
+}
+```
+
+### Eventos de Agenda
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/api/events/user/{userId}?year=YYYY&month=MM` | Listar eventos de um mês |
+| POST | `/api/events` | Criar evento |
+| PUT | `/api/events/{id}` | Atualizar evento |
+| DELETE | `/api/events/{id}` | Remover evento |
+
+**Criar evento - corpo:**
+```json
+{
+  "title": "Consulta médica",
+  "description": "Retorno cardiologista",
+  "eventDate": "2025-06-15",
+  "eventTime": "14:00:00",
+  "userId": 1
+}
+```
 
 **Resposta de `/api/moods`:**
 ```json
@@ -208,12 +248,16 @@ Project-Diary/
 │   │   ├── login.html
 │   │   ├── register.html
 │   │   ├── notes.html            # mural de notas
-│   │   └── mood-history.html     # histórico de humor
+│   │   ├── mood-history.html     # histórico de humor
+│   │   ├── dashboard.html        # dashboard de atividades e ofensivo
+│   │   └── agenda.html           # agenda com calendário e mood visual
 │   └── scripts/
 │       ├── login.js
 │       ├── register.js
 │       ├── notes.js
-│       └── mood-history.js
+│       ├── mood-history.js
+│       ├── dashboard.js
+│       └── agenda.js
 ├── docker-compose.yml
 └── .env
 ```

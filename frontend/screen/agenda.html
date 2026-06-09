@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda - Diário de Emoções</title>
+    <link rel="shortcut icon" href="../images/main-logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../style/index.css">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html"><i class="bi bi-journal-text"></i> Meu Diário</a>
+            <div class="d-flex gap-2">
+                <a href="notes.html" class="btn btn-outline-secondary">Notas <i class="bi bi-journal-text"></i></a>
+                <a href="mood-history.html" class="btn btn-outline-secondary">Humor <i class="bi bi-graph-up"></i></a>
+                <a href="dashboard.html" class="btn btn-outline-secondary">Dashboard <i class="bi bi-fire"></i></a>
+                <button class="btn btn-outline-danger" id="logout-button">Sair <i class="bi bi-box-arrow-right"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Agenda Section -->
+    <div id="app" class="container py-5">
+        <h2 class="text-center mb-4">Agenda</h2>
+
+        <div v-if="errorMessage" class="alert alert-danger alert-dismissible mb-3" role="alert">
+            {{ errorMessage }}
+            <button type="button" class="btn-close" @click="errorMessage = ''"></button>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Calendar -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+
+                        <!-- Month navigation -->
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <button class="btn btn-outline-secondary btn-sm" @click="prevMonth">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <h5 class="mb-0 fw-semibold">{{ monthName }} {{ currentYear }}</h5>
+                            <button class="btn btn-outline-secondary btn-sm" @click="nextMonth">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <!-- Weekday headers -->
+                        <div class="calendar-grid mb-1">
+                            <div v-for="d in ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']" :key="d"
+                                 class="text-center text-muted small fw-semibold py-1">{{ d }}</div>
+                        </div>
+
+                        <!-- Day cells -->
+                        <div class="calendar-grid">
+                            <div v-for="(cell, idx) in calendarDays" :key="idx"
+                                 class="calendar-cell"
+                                 :class="{
+                                     'today': cell.isToday,
+                                     'other-month': !cell.isCurrentMonth,
+                                     'selected-day': selectedDay && selectedDay.dateStr === cell.dateStr
+                                 }"
+                                 @click="selectDay(cell)">
+                                <div class="small fw-semibold mb-1" :class="cell.isCurrentMonth ? '' : 'text-muted'">{{ cell.day }}</div>
+                                <div v-if="cell.mood" class="text-center lh-1" style="font-size: 1rem;">{{ cell.mood.emoji }}</div>
+                                <div v-if="cell.events.length > 0" class="d-flex flex-wrap gap-1 mt-1">
+                                    <span v-for="(e, i) in cell.events.slice(0, 3)" :key="i"
+                                          style="width: 6px; height: 6px; border-radius: 50%; background-color: #00ad76; display: inline-block;"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day Detail Panel -->
+            <div class="col-lg-4">
+                <div v-if="!selectedDay" class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center text-muted py-5">
+                        <i class="bi bi-calendar3" style="font-size: 2.5rem;"></i>
+                        <p class="mt-3 mb-0 text-center">Clique em um dia para ver os detalhes e compromissos.</p>
+                    </div>
+                </div>
+
+                <div v-if="selectedDay" class="card shadow-sm">
+                    <div class="card-body">
+                        <h6 class="fw-semibold mb-1">{{ selectedDayLabel }}</h6>
+                        <hr class="my-2">
+
+                        <!-- Mood -->
+                        <div class="mb-3">
+                            <small class="text-muted d-block mb-1">Humor</small>
+                            <span v-if="selectedDay.mood" class="d-flex align-items-center gap-2">
+                                <span style="font-size: 1.5rem;">{{ selectedDay.mood.emoji }}</span>
+                                <span class="text-capitalize">{{ selectedDay.mood.title }}</span>
+                            </span>
+                            <span v-else class="text-muted small">Nenhum humor registrado neste dia.</span>
+                        </div>
+
+                        <!-- Events -->
+                        <div class="mb-3">
+                            <small class="text-muted d-block mb-1">Compromissos</small>
+                            <div v-if="selectedDay.events.length === 0" class="text-muted small">Nenhum compromisso.</div>
+                            <ul class="list-group list-group-flush">
+                                <li v-for="event in selectedDay.events" :key="event.id"
+                                    class="list-group-item d-flex justify-content-between align-items-center px-0 py-1">
+                                    <span>
+                                        <span v-if="event.eventTime" class="text-muted small me-2">{{ event.eventTime.substring(0, 5) }}</span>
+                                        {{ event.title }}
+                                    </span>
+                                    <button class="btn btn-sm btn-outline-danger py-0" @click="deleteEvent(event.id)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Add event form -->
+                        <div>
+                            <small class="text-muted d-block mb-2">Adicionar compromisso</small>
+                            <form @submit.prevent="addEvent" class="d-flex flex-column gap-2">
+                                <input type="text" class="form-control form-control-sm"
+                                       v-model="newEventTitle" placeholder="Título do compromisso" required>
+                                <input type="time" class="form-control form-control-sm"
+                                       v-model="newEventTime">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-plus-lg"></i> Salvar
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="text-center">
+                    <p class="mb-0">LucasAguiar&copy;2025</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/agenda.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
