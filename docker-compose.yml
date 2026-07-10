@@ -25,6 +25,12 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       SERVER_PORT: 8421
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8420}
+      RESET_TOKEN_EXPIRATION_MINUTES: ${RESET_TOKEN_EXPIRATION_MINUTES:-30}
     depends_on:
       postgres:
         condition: service_healthy

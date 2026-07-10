@@ -17,7 +17,9 @@ public class JwtFilter implements Filter {
 
     private static final List<String> PUBLIC_PATHS = List.of(
             "/api/users/login",
-            "/api/users/register"
+            "/api/users/register",
+            "/api/users/forgot-password",
+            "/api/users/reset-password"
     );
 
     @Autowired
