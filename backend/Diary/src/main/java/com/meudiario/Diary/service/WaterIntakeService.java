@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.time.ZoneId;
 
 @Service
 public class WaterIntakeService {
@@ -24,7 +25,7 @@ public class WaterIntakeService {
     public WaterResponse getTodayCount(int userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o id: " + userId));
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("America/Sao_Paulo"));
         return waterIntakeRepository.findByUser_IdAndDate(userId, today)
                 .map(w -> new WaterResponse(w.getId(), w.getDate(), w.getQuantity()))
                 .orElse(new WaterResponse(null, today, 0));
@@ -33,7 +34,7 @@ public class WaterIntakeService {
     public WaterResponse incrementToday(int userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o id: " + userId));
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("America/Sao_Paulo"));
         WaterIntake intake = waterIntakeRepository.findByUser_IdAndDate(userId, today)
                 .orElseGet(() -> {
                     WaterIntake w = new WaterIntake();
@@ -48,7 +49,7 @@ public class WaterIntakeService {
     }
 
     public WaterResponse decrementToday(int userId) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("America/Sao_Paulo"));
         WaterIntake intake = waterIntakeRepository.findByUser_IdAndDate(userId, today).orElse(null);
         if (intake == null || intake.getQuantity() <= 1) {
             if (intake != null) {
