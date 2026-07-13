@@ -77,3 +77,51 @@ body {
     background-color: #00ad7620;
     border-color: #00ad76;
 }
+
+/* ===== Landing (index.html apenas) ===== */
+
+.hero-section {
+    background: linear-gradient(135deg, var(--background-primary) 0%, #e2f5ee 100%);
+    background-attachment: fixed;
+    padding: 5rem 0;
+}
+.hero-section h1    { font-weight: 700; letter-spacing: -0.5px; }
+.hero-section .lead { color: #475569; max-width: 32rem; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up         { animation: fadeInUp 0.8s ease-out both; }
+.fade-in-up.delay-1 { animation-delay: 0.15s; }
+
+@keyframes floatY {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-14px); }
+}
+.hero-float { animation: floatY 5s ease-in-out infinite; }
+
+.section-heading  { font-weight: 700; }
+.section-subtitle { color: #64748b; }
+
+.feature-card {
+    border: 1px solid #e9ecef;
+    border-radius: 0.75rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0, 173, 118, 0.15);
+}
+
+.cta-section {
+    background: linear-gradient(135deg, var(--primary-clr) 0%, #00ad76 100%);
+    color: #fff;
+    padding: 4rem 0;
+}
+.cta-section .btn-light { color: #00825a; font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+    .fade-in-up, .hero-float { animation: none; }
+    .hero-section { background-attachment: scroll; }
+}

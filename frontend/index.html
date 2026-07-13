@@ -11,48 +11,31 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-light bg-light shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="#"><i class="bi bi-journal-text"></i> Meu Diário</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">               
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Registros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Estatísticas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Perfil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-primary" href="./screen/register.html">Registrar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-outline-primary ms-2" href="./screen/login.html">Login</a>
-                    </li>
-                </ul>
-            </div>
+            <a class="navbar-brand fw-semibold" href="index.html"><i class="bi bi-journal-text"></i> Meu Diário</a>
+            <ul class="navbar-nav ms-auto flex-row align-items-center mb-0">
+                <li class="nav-item">
+                    <a class="nav-link text-primary me-3" href="./screen/register.html">Registrar</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-primary" href="./screen/login.html">Login</a>
+                </li>
+            </ul>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
+            <div class="row align-items-center g-5">
+                <div class="col-md-6 fade-in-up">
                     <h1 class="display-4">Bem-vindo ao seu Diário de Emoções</h1>
-                    <p class="lead">Um espaço seguro para registrar e entender seus sentimentos diários.</p>
-                    <a href="./screen/login.html" class="btn btn-primary btn-lg">Acessar Diário</a>
+                    <p class="lead mt-3">Um espaço seguro para registrar e entender seus sentimentos diários.</p>
+                    <a href="./screen/login.html" class="btn btn-primary btn-lg mt-2">Acessar Diário</a>
                 </div>
-                <div class="col-md-6 text-center">
-                    <img src="./images/brain-image.png" alt="Ilustração" class="img-fluid rounded shadow">
+                <div class="col-md-6 text-center fade-in-up delay-1">
+                    <img src="./images/brain-image.png" alt="Ilustração de cérebro" class="img-fluid rounded hero-float">
                 </div>
             </div>
         </div>
@@ -61,53 +44,75 @@
     <!-- Features Section -->
     <section class="py-5">
         <div class="container">
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
+            <div class="text-center mb-5">
+                <h2 class="section-heading">Tudo que você precisa em um só lugar</h2>
+                <p class="section-subtitle">Ferramentas simples para cuidar do seu bem-estar todos os dias.</p>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <div class="col">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
                             <i class="bi bi-pencil-square fs-1 text-primary mb-3"></i>
                             <h5 class="card-title">Registre suas Emoções</h5>
                             <p class="card-text">Faça anotações diárias sobre seus sentimentos e experiências.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
+                <div class="col">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
                             <i class="bi bi-graph-up fs-1 text-primary mb-3"></i>
                             <h5 class="card-title">Acompanhe seu Progresso</h5>
                             <p class="card-text">Visualize padrões e tendências em suas emoções ao longo do tempo.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
+                <div class="col">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
                             <i class="bi bi-lightbulb fs-1 text-primary mb-3"></i>
                             <h5 class="card-title">Insights Personalizados</h5>
                             <p class="card-text">Receba sugestões baseadas em seus padrões emocionais.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
+                <div class="col">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
                             <i class="bi bi-fire fs-1 text-primary mb-3"></i>
                             <h5 class="card-title">Ofensivo de Hábitos</h5>
                             <p class="card-text">Cadastre atividades diárias e mantenha seu ofensivo de dias consecutivos.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
+                <div class="col">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
                             <i class="bi bi-calendar3 fs-1 text-primary mb-3"></i>
                             <h5 class="card-title">Agenda com Humor</h5>
                             <p class="card-text">Visualize seus compromissos no calendário junto com o humor de cada dia.</p>
                         </div>
                     </div>
                 </div>
+                <div class="col">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-cup-straw fs-1 text-primary mb-3"></i>
+                            <h5 class="card-title">Registre sua Hidratação</h5>
+                            <p class="card-text">Acompanhe quantas garrafas de água você bebe ao longo do dia.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section text-center">
+        <div class="container">
+            <h2 class="fw-bold mb-3">Comece a registrar suas emoções hoje</h2>
+            <p class="mb-4 opacity-75">Crie sua conta gratuita e dê o primeiro passo para se conhecer melhor.</p>
+            <a href="./screen/register.html" class="btn btn-light btn-lg">Criar conta grátis</a>
         </div>
     </section>
 
