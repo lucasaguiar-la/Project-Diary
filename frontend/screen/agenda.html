@@ -62,12 +62,11 @@
                                      'selected-day': selectedDay && selectedDay.dateStr === cell.dateStr
                                  }"
                                  @click="selectDay(cell)">
-                                <div class="small fw-semibold mb-1" :class="cell.isCurrentMonth ? '' : 'text-muted'">{{ cell.day }}</div>
+                                <div class="small fw-semibold mb-1 cell-day-number" :class="cell.isCurrentMonth ? '' : 'text-muted'">{{ cell.day }}</div>
                                 <i v-if="cell.isStreakDay" class="bi bi-fire streak-badge" title="Dia com atividade concluída"></i>
-                                <div v-if="cell.mood" class="text-center lh-1" style="font-size: 1rem;">{{ cell.mood.emoji }}</div>
+                                <div v-if="cell.mood" class="text-center lh-1 cell-mood-emoji">{{ cell.mood.emoji }}</div>
                                 <div v-if="cell.events.length > 0" class="d-flex flex-wrap gap-1 mt-1">
-                                    <span v-for="(e, i) in cell.events.slice(0, 3)" :key="i"
-                                          style="width: 6px; height: 6px; border-radius: 50%; background-color: #00ad76; display: inline-block;"></span>
+                                    <span v-for="(e, i) in cell.events.slice(0, 3)" :key="i" class="cell-event-dot"></span>
                                 </div>
                             </div>
                         </div>

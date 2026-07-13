@@ -1,22 +1,37 @@
-# Project Diary
+# Meu Diário
 
-Diário de emoções pessoal. Permite criar anotações diárias associadas a um estado de humor e acompanhar, ao longo do tempo, como o usuário tem se sentido.
+Meu Diário é uma aplicação fullstack de diário de emoções. Permite registrar anotações diárias associadas a um estado de humor, acompanhar padrões emocionais ao longo do tempo, manter hábitos com sequência de dias consecutivos, organizar compromissos num calendário e controlar a ingestão diária de água, tudo em um só lugar.
 
-## Stack
+## Preview
 
-| Camada | Tecnologia |
-|---|---|
-| Backend | Java 17, Spring Boot 3.4.x, Spring Data JPA |
-| Banco de dados | PostgreSQL 16 |
-| Frontend | Vue.js 2 (CDN), Bootstrap 5 |
-| Proxy | nginx |
-| Autenticação | JWT (JJWT 0.12.6), BCrypt |
-| Containerização | Docker, Docker Compose |
+<div style="max-width: 700px; overflow: hidden;">
+  <img src="./frontend/images/homepage-preview.png" alt="Página inicial do Meu Diário" style="width: 100%; height: auto;">
+</div>
+
+## Tecnologias
+
+- **Backend:** Java 17, Spring Boot 3.4, Spring Data JPA
+- **Frontend:** Vue.js 2 (via CDN, sem build step), Bootstrap 5, Bootstrap Icons
+- **Banco de dados:** PostgreSQL 16
+- **Autenticação:** JWT (JJWT), BCrypt para hash de senha
+- **E-mail:** Spring Mail (SMTP), usado no fluxo de recuperação de senha
+- **Infraestrutura:** Docker, Docker Compose, nginx (proxy reverso e servidor de arquivos estáticos)
+
+## Funcionalidades
+
+- Cadastro, login e recuperação de senha por e-mail com token temporário
+- Mural de emoções: anotações diárias associadas a uma de 8 emoções (feliz, amor, calma, surpresa, neutralidade, ansiedade, tristeza, raiva), cada uma com uma cor baseada em teoria das cores, legenda visual e filtro por humor
+- Histórico de humor com cards coloridos por emoção, humor predominante e distribuição de humor no período
+- Dashboard de hábitos: cadastro de atividades diárias, sequência de dias consecutivos ("Constância"), pendências do dia e total de hábitos cadastrados
+- Agenda com calendário mensal, mostrando humor do dia, compromissos e dias em que a sequência de hábitos foi mantida
+- Controle de hidratação: registro de garrafas bebidas no dia, meta diária configurável (em litros ou garrafas) e visualização em uma garrafa que enche conforme a meta é atingida
+- Navegação por barra lateral fixa no desktop (expande ao passar o mouse) e menu colapsável no mobile
+- Interface responsiva, testada em telas de smartphone, tablet e desktop
 
 ## Arquitetura
 
 ```
-Browser
+Navegador
   |
   v
 nginx : 8420 (host)
@@ -25,61 +40,96 @@ nginx : 8420 (host)
                         |
                         v
                    PostgreSQL : 5432 (interno)
-                   exposto em 5433 no host para acesso DBA
+                   exposto em 5433 no host para acesso administrativo
 ```
 
-O backend nunca é exposto diretamente ao host. Todo o tráfego passa pelo nginx.
+O backend nunca é exposto diretamente ao host: todo o tráfego passa pelo nginx.
 
-## Pré-requisitos
+## Estrutura do projeto
 
-- Docker e Docker Compose
-- Git
-
-## Como rodar
-
-### 1. Clonar o repositório
-
-```bash
-git clone <url-do-repositorio>
-cd Project-Diary
+```text
+Project-Diary/
+├── backend/
+│   └── Diary/
+│       ├── Dockerfile
+│       ├── pom.xml
+│       └── src/main/java/com/meudiario/Diary/
+│           ├── controller/       # endpoints REST
+│           ├── database/         # seed inicial de emoções
+│           ├── dto/              # objetos de request e response
+│           ├── filter/           # validação de JWT
+│           ├── model/            # entidades JPA
+│           ├── repository/       # interfaces Spring Data
+│           ├── service/          # regras de negócio
+│           └── util/             # geração e validação de token
+├── frontend/
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   ├── index.html                # landing page
+│   ├── images/
+│   ├── style/
+│   │   └── index.css             # estilos compartilhados por todas as páginas
+│   ├── screen/
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   ├── forgot-password.html
+│   │   ├── reset-password.html
+│   │   ├── notes.html            # mural de emoções
+│   │   ├── mood-history.html     # histórico de humor
+│   │   ├── dashboard.html        # hábitos e sequência de dias
+│   │   ├── agenda.html           # calendário
+│   │   └── water.html            # controle de hidratação
+│   └── scripts/
+│       ├── sidebar.js            # navegação compartilhada (injetada em todas as páginas autenticadas)
+│       ├── mood-colors.js        # paleta de cores por emoção (compartilhada)
+│       └── ...                   # um script por página, mesmo nome do HTML
+├── docker-compose.yml
+└── .env
 ```
 
-### 2. Configurar o `.env`
+## Configuração
 
-O arquivo `.env` já existe na raiz com valores de exemplo. Edite-o com os valores reais antes de subir:
+Crie um arquivo `.env` na raiz do projeto com as variáveis abaixo:
 
 ```env
 DB_NAME=meudiario
 DB_USER=meudiario_user
 DB_PASSWORD=sua_senha_segura
 JWT_SECRET=string_aleatoria_com_minimo_32_caracteres
+
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=seu_email@gmail.com
+MAIL_PASSWORD=sua_senha_de_app
+
+FRONTEND_URL=http://localhost:8420
+RESET_TOKEN_EXPIRATION_MINUTES=30
 ```
 
-O `JWT_SECRET` precisa ter no mínimo 32 caracteres (requisito do algoritmo HMAC-SHA256).
+Notas:
 
-### 3. Subir os serviços
+- `JWT_SECRET` precisa ter no mínimo 32 caracteres (requisito do algoritmo HMAC-SHA256).
+- As variáveis `MAIL_*` alimentam o envio de e-mail de recuperação de senha. Para testes, um serviço como Mailtrap ou Ethereal evita disparar e-mails reais.
+
+## Como executar
+
+### Via Docker (recomendado)
+
+Sobe todos os serviços com um único comando. O nginx serve o frontend na porta 8420 e encaminha as requisições de API para o backend.
 
 ```bash
 docker compose up -d --build
 ```
 
-Na primeira execução, os moods padrão (feliz, neutro, triste, ansioso, calmo) são inseridos automaticamente no banco.
-
-### 4. Acompanhar os logs
+Acompanhe os logs até a mensagem `Started DiaryApplication`:
 
 ```bash
 docker compose logs -f backend
 ```
 
-Aguarde a mensagem `Started DiaryApplication` antes de acessar a aplicação.
+Acesse: `http://localhost:8420`
 
-### 5. Acessar
-
-```
-http://localhost:8420
-```
-
-### Comandos úteis
+Na primeira execução, as emoções padrão são inseridas automaticamente no banco.
 
 ```bash
 # Derrubar os serviços mantendo os dados do banco
@@ -92,195 +142,47 @@ docker compose down -v
 docker compose up -d --build backend
 ```
 
-## Endpoints da API
+### Desenvolvimento local
 
-Todos os endpoints, exceto `/api/users/login` e `/api/users/register`, exigem o header:
+**Backend:**
+
+```bash
+cd backend/Diary
+./mvnw spring-boot:run
+```
+
+**Frontend:**
+
+O frontend não tem build step, é servido como arquivos estáticos. Para desenvolvimento local, basta um servidor HTTP simples apontando para a pasta `frontend/`:
+
+```bash
+cd frontend
+python -m http.server 8888
+```
+
+## Endpoints principais da API
+
+Todos os endpoints, exceto os de autenticação, exigem o header:
 
 ```
 Authorization: Bearer <token>
 ```
 
-O token é obtido no login e armazenado no `localStorage` pelo frontend.
+| Recurso | Endpoints |
+|---|---|
+| Usuários | `POST /api/users/register`, `POST /api/users/login`, `POST /api/users/forgot-password`, `POST /api/users/reset-password` |
+| Notas | `POST/GET/PUT/DELETE /api/notes`, `GET /api/notes/user/{userId}` |
+| Emoções | `GET /api/moods`, `GET /api/moods/user/{userId}?year=&month=` |
+| Hábitos | `GET/POST/DELETE /api/activities`, `POST /api/activities/{id}/complete`, `GET /api/activities/user/{userId}/streak`, `GET /api/activities/user/{userId}/completed-dates?year=&month=` |
+| Agenda | `GET/POST/PUT/DELETE /api/events`, `GET /api/events/user/{userId}?year=&month=` |
+| Água | `GET /api/water/user/{userId}`, `POST /api/water/increment`, `POST /api/water/decrement`, `GET /api/water/user/{userId}/history` |
 
-### Usuários
+## Limitações conhecidas
 
-| Método | Endpoint | Descrição | Auth |
-|---|---|---|---|
-| POST | `/api/users/register` | Criar conta | Não |
-| POST | `/api/users/login` | Autenticar e obter token | Não |
+- Erros de negócio no backend (e-mail duplicado, credenciais inválidas) retornam HTTP 500 em vez dos códigos semânticos corretos (409, 401). A correção requer um `@ControllerAdvice` global.
+- Não há verificação de ownership nas notas: um usuário autenticado pode acessar notas de outro usuário conhecendo o ID pela URL.
+- A meta diária de água é armazenada apenas no navegador (localStorage), não sincroniza entre dispositivos.
 
-**Registro - corpo:**
-```json
-{
-  "firstName": "Lucas",
-  "lastName": "Aguiar",
-  "email": "lucas@exemplo.com",
-  "password": "senha123"
-}
-```
+## Licença
 
-**Login - corpo:**
-```json
-{
-  "email": "lucas@exemplo.com",
-  "password": "senha123"
-}
-```
-
-**Login - resposta:**
-```json
-{
-  "token": "eyJ...",
-  "userId": 1,
-  "firstName": "Lucas",
-  "lastName": "Aguiar"
-}
-```
-
-### Notas
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| POST | `/api/notes` | Criar nota |
-| GET | `/api/notes/user/{userId}` | Listar notas do usuário |
-| GET | `/api/notes/{id}` | Buscar nota por ID |
-| PUT | `/api/notes/{id}` | Editar título e conteúdo |
-| DELETE | `/api/notes/{id}` | Excluir nota |
-
-**Criar nota - corpo:**
-```json
-{
-  "title": "2 de junho de 2026",
-  "content": "Hoje foi um bom dia.",
-  "userId": 1,
-  "moodIds": [1]
-}
-```
-
-**Editar nota - corpo:**
-```json
-{
-  "title": "2 de junho de 2026",
-  "content": "Conteúdo atualizado."
-}
-```
-
-### Moods
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/moods` | Listar moods disponíveis |
-| GET | `/api/moods/user/{userId}` | Histórico de moods do usuário |
-| GET | `/api/moods/user/{userId}?year=YYYY&month=MM` | Moods filtrados por mês |
-
-### Atividades (Dashboard)
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/activities/user/{userId}` | Listar atividades com status do dia |
-| POST | `/api/activities` | Cadastrar nova atividade |
-| DELETE | `/api/activities/{id}` | Remover atividade |
-| POST | `/api/activities/{id}/complete?userId={userId}` | Marcar atividade como concluída hoje |
-| DELETE | `/api/activities/{id}/complete/today?userId={userId}` | Desmarcar conclusão de hoje |
-| GET | `/api/activities/user/{userId}/streak` | Retornar streak atual (dias consecutivos) |
-
-**Cadastrar atividade - corpo:**
-```json
-{
-  "title": "Meditar",
-  "userId": 1
-}
-```
-
-### Eventos de Agenda
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/events/user/{userId}?year=YYYY&month=MM` | Listar eventos de um mês |
-| POST | `/api/events` | Criar evento |
-| PUT | `/api/events/{id}` | Atualizar evento |
-| DELETE | `/api/events/{id}` | Remover evento |
-
-**Criar evento - corpo:**
-```json
-{
-  "title": "Consulta médica",
-  "description": "Retorno cardiologista",
-  "eventDate": "2025-06-15",
-  "eventTime": "14:00:00",
-  "userId": 1
-}
-```
-
-**Resposta de `/api/moods`:**
-```json
-[
-  { "id": 1, "title": "feliz", "emoji": "😊" },
-  { "id": 2, "title": "neutro", "emoji": "😐" },
-  { "id": 3, "title": "triste", "emoji": "😢" },
-  { "id": 4, "title": "ansioso", "emoji": "😟" },
-  { "id": 5, "title": "calmo", "emoji": "😌" }
-]
-```
-
-## Estrutura do projeto
-
-```
-Project-Diary/
-├── backend/
-│   └── Diary/
-│       ├── Dockerfile
-│       ├── pom.xml
-│       └── src/main/java/com/meudiario/Diary/
-│           ├── controller/       # endpoints REST
-│           ├── database/         # DataInitializer (seed de moods)
-│           ├── dto/              # objetos de request e response
-│           ├── filter/           # JwtFilter
-│           ├── model/            # entidades JPA
-│           ├── repository/       # interfaces Spring Data
-│           ├── service/          # regras de negócio
-│           └── util/             # JwtUtil
-├── frontend/
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   ├── index.html                # landing page
-│   ├── screen/
-│   │   ├── login.html
-│   │   ├── register.html
-│   │   ├── notes.html            # mural de notas
-│   │   ├── mood-history.html     # histórico de humor
-│   │   ├── dashboard.html        # dashboard de atividades e ofensivo
-│   │   └── agenda.html           # agenda com calendário e mood visual
-│   └── scripts/
-│       ├── login.js
-│       ├── register.js
-│       ├── notes.js
-│       ├── mood-history.js
-│       ├── dashboard.js
-│       └── agenda.js
-├── docker-compose.yml
-└── .env
-```
-
-## Variáveis de ambiente
-
-| Variável | Descrição | Obrigatório |
-|---|---|---|
-| `DB_NAME` | Nome do banco de dados | Sim |
-| `DB_USER` | Usuário do banco | Sim |
-| `DB_PASSWORD` | Senha do banco | Sim |
-| `JWT_SECRET` | Chave secreta para assinar tokens JWT (mín. 32 chars) | Sim |
-
-## Portas no host
-
-| Serviço | Porta | Observação |
-|---|---|---|
-| Frontend | 8420 | Acesso principal da aplicação |
-| PostgreSQL | 5433 | Acesso direto ao banco para administração |
-| Backend | não exposta | Tráfego apenas via nginx internamente |
-
-## Pendências conhecidas
-
-- Erros de negócio no backend (e-mail duplicado, credenciais inválidas) retornam HTTP 500 em vez dos códigos semânticos corretos (409, 401). A correção requer um `@ControllerAdvice`.
-- Não há verificação de ownership nas notas: um usuário autenticado pode acessar notas de outro usuário conhecendo o ID via URL.
-- O humor "ansioso" está disponível no banco mas não aparece no seletor da interface de criação de notas.
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](./LICENSE) para mais detalhes.

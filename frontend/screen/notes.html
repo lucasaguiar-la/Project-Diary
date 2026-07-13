@@ -95,7 +95,7 @@
 
                         <!-- Modo visualizacao -->
                         <div v-if="editingId !== note.id">
-                            <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div class="d-flex flex-wrap w-100 justify-content-between align-items-center">
                                 <h5 class="mb-1">{{ getMoodDisplay(note) }}</h5>
                                 <div class="d-flex align-items-center gap-2">
                                     <small class="text-muted">{{ formatDate(note.createdAt) }}</small>

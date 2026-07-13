@@ -283,3 +283,35 @@ body {
     color: #fd7e14;
     font-size: 0.7rem;
 }
+.cell-mood-emoji {
+    font-size: 1rem;
+}
+.cell-event-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #00ad76;
+}
+
+@media (max-width: 400px) {
+    .calendar-cell {
+        padding: 3px;
+        min-height: 58px;
+    }
+    .calendar-cell .cell-day-number {
+        font-size: 0.7rem;
+    }
+    .streak-badge {
+        top: 2px;
+        right: 2px;
+        font-size: 0.55rem;
+    }
+    .cell-mood-emoji {
+        font-size: 0.8rem;
+    }
+    .cell-event-dot {
+        width: 5px;
+        height: 5px;
+    }
+}

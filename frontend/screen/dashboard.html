@@ -87,14 +87,14 @@
                         <div class="list-group list-group-flush">
                             <div v-for="activity in activities" :key="activity.id"
                                  class="list-group-item d-flex align-items-center justify-content-between px-0">
-                                <div class="d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center gap-2 flex-grow-1" style="min-width: 0;">
                                     <i :class="activity.completedToday ? 'bi bi-check-circle-fill text-success' : 'bi bi-circle text-secondary'"
                                        style="font-size: 1.25rem;"></i>
-                                    <span :class="activity.completedToday ? 'text-decoration-line-through text-muted' : ''">
+                                    <span class="text-truncate" :class="activity.completedToday ? 'text-decoration-line-through text-muted' : ''">
                                         {{ activity.title }}
                                     </span>
                                 </div>
-                                <div class="d-flex gap-2">
+                                <div class="d-flex gap-2 flex-shrink-0">
                                     <button @click="toggleActivity(activity)"
                                             :class="activity.completedToday ? 'btn btn-sm btn-success' : 'btn btn-sm btn-outline-secondary'">
                                         {{ activity.completedToday ? 'Feito' : 'Marcar' }}
