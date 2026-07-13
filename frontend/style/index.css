@@ -29,7 +29,7 @@ body {
     background-color: #8dffdb91;
     border-color: var(--primary-clr);
 }
-.row .btn-primary {
+.btn.btn-primary {
     background-color: var(--primary-clr);
     border-color: var(--primary-clr);
 }

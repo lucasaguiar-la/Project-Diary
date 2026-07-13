@@ -33,7 +33,7 @@
                 <!-- Streak Card -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body text-center">
-                        <h5 class="card-title mb-3">Seu Ofensivo</h5>
+                        <h5 class="card-title mb-3">Sua Constância</h5>
                         <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
                             <i class="bi bi-fire" style="font-size: 2.5rem; color: #fd7e14;"></i>
                             <span class="display-4 fw-bold text-success">{{ streak }}</span>
@@ -49,10 +49,35 @@
                     </div>
                 </div>
 
+                <!-- Stats -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <div class="fs-4 fw-bold">{{ pendingToday }}</div>
+                                <small class="text-muted">Pendente(s) hoje</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <div class="fs-4 fw-bold">{{ activities.length }}</div>
+                                <small class="text-muted">Hábitos cadastrados</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Activities Today -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
-                        <h5 class="card-title">Atividades de Hoje</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title mb-0">Atividades de Hoje</h5>
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addActivityModal">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
 
                         <div v-if="activities.length === 0" class="text-center text-muted py-3">
                             <i class="bi bi-clipboard" style="font-size: 2rem;"></i>
@@ -83,20 +108,30 @@
                     </div>
                 </div>
 
-                <!-- Add Activity -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Nova Atividade</h5>
-                        <form @submit.prevent="addActivity" class="d-flex gap-2">
+            </div>
+        </div>
+
+        <!-- Add Activity Modal -->
+        <div class="modal fade" id="addActivityModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form @submit.prevent="addActivity">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Nova Atividade</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body">
                             <input type="text" class="form-control" v-model="newActivityTitle"
                                    placeholder="Ex: Meditar, Exercício, Leitura..." required>
-                            <button type="submit" class="btn btn-primary text-nowrap">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-plus-lg"></i> Adicionar
                             </button>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
-
             </div>
         </div>
     </div>

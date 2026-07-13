@@ -24,8 +24,11 @@ new Vue({
             if (this.activities.length === 0) return 0;
             return Math.round((this.completedToday / this.activities.length) * 100);
         },
+        pendingToday() {
+            return this.activities.length - this.completedToday;
+        },
         incentiveMessage() {
-            if (this.streak === 0) return 'Comece hoje e inicie seu ofensivo!';
+            if (this.streak === 0) return 'Comece hoje e inicie sua constância!';
             if (this.streak < 7) return 'Ótimo começo! Continue assim todos os dias.';
             if (this.streak < 30) return 'Incrível! Você está construindo um hábito.';
             return 'Parabéns! Você é um exemplo de consistência!';
@@ -81,6 +84,7 @@ new Vue({
             .then(created => {
                 this.activities.push({ id: created.id, title: created.title, createdAt: created.createdAt, completedToday: false });
                 this.newActivityTitle = '';
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('addActivityModal')).hide();
             })
             .catch(err => { this.errorMessage = err.message; });
         },
