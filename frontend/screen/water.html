@@ -33,11 +33,24 @@
                 <div class="card shadow-sm mb-4">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-3">Garrafas hoje</h5>
-                        <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
-                            <i class="bi bi-cup-straw" style="font-size: 2.5rem; color: #0d6efd;"></i>
-                            <span class="display-2 fw-bold text-primary">{{ todayQuantity }}</span>
-                        </div>
-                        <div class="d-flex justify-content-center gap-2">
+
+                        <svg viewBox="0 0 100 200" width="110" height="220" class="mb-3">
+                            <defs>
+                                <clipPath id="bottleClip">
+                                    <path d="M38,0 H62 V16 L80,32 V96 L84,100 V196 H16 V100 L20,96 V32 L38,16 Z" />
+                                </clipPath>
+                            </defs>
+                            <path d="M38,0 H62 V16 L80,32 V96 L84,100 V196 H16 V100 L20,96 V32 L38,16 Z"
+                                  fill="#eef3f7" stroke="#0d6efd" stroke-width="3" />
+                            <rect x="0" :y="200 - (fillPercent * 2)" width="100" :height="fillPercent * 2"
+                                  fill="#4dabf7" clip-path="url(#bottleClip)"
+                                  style="transition: y 0.4s ease, height 0.4s ease;" />
+                        </svg>
+
+                        <div class="display-5 fw-bold text-primary">{{ todayLiters.toFixed(1) }}L</div>
+                        <div class="text-muted mb-3">de {{ dailyGoalLiters.toFixed(1) }}L &middot; {{ todayQuantity }} garrafa(s)</div>
+
+                        <div class="d-flex justify-content-center gap-2 mb-3">
                             <button class="btn btn-outline-secondary" @click="decrement" :disabled="todayQuantity === 0">
                                 <i class="bi bi-dash-lg"></i>
                             </button>
@@ -45,6 +58,11 @@
                                 <i class="bi bi-plus-lg"></i> Beber garrafa
                             </button>
                         </div>
+
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#waterGoalModal" @click="openGoalModal">
+                            <i class="bi bi-pencil"></i> Editar meta
+                        </button>
                     </div>
                 </div>
 
@@ -58,10 +76,43 @@
                             <li v-for="entry in history" :key="entry.date"
                                 class="list-group-item d-flex justify-content-between px-0">
                                 <span>{{ entry.date }}</span>
-                                <span class="fw-semibold">{{ entry.quantity }} garrafa(s)</span>
+                                <span class="fw-semibold">{{ toLiters(entry.quantity) }}L
+                                    <small class="text-muted">({{ entry.quantity }} garrafa(s))</small>
+                                </span>
                             </li>
                         </ul>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Water Goal Modal -->
+        <div class="modal fade" id="waterGoalModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form @submit.prevent="saveGoal">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Meta diária de água</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Meta</label>
+                                <input type="number" step="0.1" min="0.1" class="form-control" v-model="goalInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Unidade</label>
+                                <select class="form-select" v-model="goalUnit">
+                                    <option value="litros">Litros</option>
+                                    <option value="garrafas">Garrafas (500ml cada)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

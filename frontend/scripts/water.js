@@ -1,10 +1,15 @@
+const BOTTLE_LITERS = 0.5;
+
 new Vue({
     el: '#app',
     data: {
         userId: null,
         todayQuantity: 0,
         history: [],
-        errorMessage: ''
+        errorMessage: '',
+        dailyGoalLiters: 2,
+        goalUnit: 'litros',
+        goalInput: 2
     },
     created() {
         this.userId = localStorage.getItem('userId');
@@ -12,8 +17,19 @@ new Vue({
             window.location.href = 'login.html';
             return;
         }
+        const savedGoal = parseFloat(localStorage.getItem('waterDailyGoalLiters'));
+        this.dailyGoalLiters = isNaN(savedGoal) ? 2 : savedGoal;
         this.loadToday();
         this.loadHistory();
+    },
+    computed: {
+        todayLiters() {
+            return this.todayQuantity * BOTTLE_LITERS;
+        },
+        fillPercent() {
+            if (this.dailyGoalLiters <= 0) return 0;
+            return Math.min(100, Math.round((this.todayLiters / this.dailyGoalLiters) * 100));
+        }
     },
     methods: {
         getAuthHeaders() {
@@ -74,6 +90,20 @@ new Vue({
                     this.loadHistory();
                 })
                 .catch(err => { this.errorMessage = err.message; });
+        },
+        toLiters(quantity) {
+            return (quantity * BOTTLE_LITERS).toFixed(1);
+        },
+        openGoalModal() {
+            this.goalInput = this.dailyGoalLiters;
+            this.goalUnit = 'litros';
+        },
+        saveGoal() {
+            const value = parseFloat(this.goalInput);
+            if (!value || value <= 0) return;
+            this.dailyGoalLiters = this.goalUnit === 'garrafas' ? value * BOTTLE_LITERS : value;
+            localStorage.setItem('waterDailyGoalLiters', this.dailyGoalLiters);
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('waterGoalModal')).hide();
         }
     }
 });
