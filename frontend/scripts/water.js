@@ -92,7 +92,7 @@ new Vue({
                 .catch(err => { this.errorMessage = err.message; });
         },
         toLiters(quantity) {
-            return (quantity * BOTTLE_LITERS).toFixed(1);
+            return (quantity * BOTTLE_LITERS);
         },
         openGoalModal() {
             this.goalInput = this.dailyGoalLiters;

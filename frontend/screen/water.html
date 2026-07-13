@@ -47,8 +47,8 @@
                                   style="transition: y 0.4s ease, height 0.4s ease;" />
                         </svg>
 
-                        <div class="display-5 fw-bold text-primary">{{ todayLiters.toFixed(1) }}L</div>
-                        <div class="text-muted mb-3">de {{ dailyGoalLiters.toFixed(1) }}L &middot; {{ todayQuantity }} garrafa(s)</div>
+                        <div class="display-5 fw-bold text-primary">{{ todayLiters }}L</div>
+                        <div class="text-muted mb-3">de {{ dailyGoalLiters }}L &middot; {{ todayQuantity }} garrafa(s)</div>
 
                         <div class="d-flex justify-content-center gap-2 mb-3">
                             <button class="btn btn-outline-secondary" @click="decrement" :disabled="todayQuantity === 0">

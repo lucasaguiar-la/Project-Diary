@@ -92,15 +92,15 @@ Project-Diary/
 Crie um arquivo `.env` na raiz do projeto com as variáveis abaixo:
 
 ```env
-DB_NAME=meudiario
-DB_USER=meudiario_user
-DB_PASSWORD=sua_senha_segura
-JWT_SECRET=string_aleatoria_com_minimo_32_caracteres
+DB_NAME=diary_db
+DB_USER=diary_user
+DB_PASSWORD=senha
+JWT_SECRET=string_aleatoria
 
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USERNAME=seu_email@gmail.com
-MAIL_PASSWORD=sua_senha_de_app
+MAIL_PASSWORD=senha_de_app
 
 FRONTEND_URL=http://localhost:8420
 RESET_TOKEN_EXPIRATION_MINUTES=30
@@ -176,12 +176,6 @@ Authorization: Bearer <token>
 | Hábitos | `GET/POST/DELETE /api/activities`, `POST /api/activities/{id}/complete`, `GET /api/activities/user/{userId}/streak`, `GET /api/activities/user/{userId}/completed-dates?year=&month=` |
 | Agenda | `GET/POST/PUT/DELETE /api/events`, `GET /api/events/user/{userId}?year=&month=` |
 | Água | `GET /api/water/user/{userId}`, `POST /api/water/increment`, `POST /api/water/decrement`, `GET /api/water/user/{userId}/history` |
-
-## Limitações conhecidas
-
-- Erros de negócio no backend (e-mail duplicado, credenciais inválidas) retornam HTTP 500 em vez dos códigos semânticos corretos (409, 401). A correção requer um `@ControllerAdvice` global.
-- Não há verificação de ownership nas notas: um usuário autenticado pode acessar notas de outro usuário conhecendo o ID pela URL.
-- A meta diária de água é armazenada apenas no navegador (localStorage), não sincroniza entre dispositivos.
 
 ## Licença
 
