@@ -16,6 +16,28 @@ new Vue({
     computed: {
         sortedHistory() {
             return this.history.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        },
+        moodDistribution() {
+            const counts = {};
+            this.history.forEach(entry => {
+                const mood = entry.moods && entry.moods[0];
+                if (!mood) return;
+                if (!counts[mood.title]) {
+                    counts[mood.title] = { title: mood.title, emoji: mood.emoji, count: 0 };
+                }
+                counts[mood.title].count++;
+            });
+            const total = this.history.length;
+            return Object.values(counts)
+                .map(m => ({
+                    ...m,
+                    percent: total ? Math.round((m.count / total) * 100) : 0,
+                    color: window.MOOD_COLORS[m.title] ? window.MOOD_COLORS[m.title].base : '#6C757D'
+                }))
+                .sort((a, b) => b.count - a.count);
+        },
+        dominantMood() {
+            return this.moodDistribution.length ? this.moodDistribution[0] : null;
         }
     },
     methods: {
@@ -53,6 +75,14 @@ new Vue({
             if (!dateStr) return '';
             const date = new Date(dateStr);
             return date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+        },
+        cardStyle(entry) {
+            const title = entry.moods && entry.moods[0] ? entry.moods[0].title : null;
+            const c = title ? window.MOOD_COLORS[title] : null;
+            return {
+                backgroundColor: window.moodSoftBg(title, 0.14),
+                borderLeft: c ? '4px solid ' + c.base : ''
+            };
         }
     }
 });

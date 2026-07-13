@@ -42,17 +42,25 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Qual seu humor?</label>
-                                <div class="d-flex justify-content-around">
+                                <div class="d-flex flex-wrap justify-content-around gap-2">
+                                    <button v-for="m in moods" :key="m.value" type="button"
+                                            class="btn btn-lg" style="border-width: 2px;"
+                                            :title="moodLabel(m.value)"
+                                            :style="moodBtnStyle(m.value)"
+                                            @click="newNote.mood = m.value">
+                                        <i class="bi" :class="m.icon"></i>
+                                    </button>
+                                </div>
 
-                                    <!-- Emoji feliz -->
-                                    <button type="button" class="btn btn-lg" :class="{'btn-outline-success': newNote.mood !== 'feliz', 'btn-success': newNote.mood === 'feliz'}" @click="newNote.mood = 'feliz'"><i class="bi bi-emoji-smile"></i></button>
-                                    <!-- Emoji neutro -->
-                                    <button type="button" class="btn btn-lg" :class="{'btn-outline-warning': newNote.mood !== 'neutro', 'btn-warning': newNote.mood === 'neutro'}" @click="newNote.mood = 'neutro'"><i class="bi bi-emoji-neutral"></i></button>
-                                    <!-- Emoji triste -->
-                                    <button type="button" class="btn btn-lg" :class="{'btn-outline-danger': newNote.mood !== 'triste', 'btn-danger': newNote.mood === 'triste'}" @click="newNote.mood = 'triste'"><i class="bi bi-emoji-frown"></i></button>
-                                    <!-- Emoji tranquilo -->
-                                    <button type="button" class="btn btn-lg" :class="{'btn-outline-primary': newNote.mood !== 'calmo', 'btn-primary': newNote.mood === 'calmo'}" @click="newNote.mood = 'calmo'"><i class="bi bi-emoji-sunglasses"></i></button>
-
+                                <!-- Legenda de cores -->
+                                <div class="d-flex flex-wrap gap-2 mt-2">
+                                    <span v-for="m in moods" :key="'leg-' + m.value"
+                                          class="d-inline-flex align-items-center small text-muted">
+                                        <span class="d-inline-block rounded-circle me-1"
+                                              style="width: 12px; height: 12px;"
+                                              :style="{ backgroundColor: moodColor(m.value) }"></span>
+                                        {{ moodLabel(m.value) }}
+                                    </span>
                                 </div>
                             </div>
 
@@ -64,12 +72,26 @@
 
                 <!-- Display Notes -->
                 <h3 class="text-center mb-3">Suas Memórias</h3>
+
+                <div class="d-flex justify-content-end align-items-center mb-3">
+                    <label class="form-label mb-0 me-2 small text-muted">Filtrar por humor:</label>
+                    <select class="form-select form-select-sm w-auto" v-model="moodFilter">
+                        <option value="todos">Todos</option>
+                        <option v-for="m in moods" :key="'f-' + m.value" :value="m.value">
+                            {{ moodLabel(m.value) }}
+                        </option>
+                    </select>
+                </div>
+
                 <div v-if="notes.length === 0" class="text-center text-muted">
                     <p>Você ainda não tem nenhuma nota. Comece a escrever!</p>
                 </div>
+                <div v-else-if="filteredNotes.length === 0" class="text-center text-muted">
+                    <p>Nenhuma nota para este humor.</p>
+                </div>
 
                 <div class="list-group">
-                    <div v-for="note in sortedNotes" :key="note.id" class="list-group-item flex-column align-items-start mb-2 shadow-sm">
+                    <div v-for="note in filteredNotes" :key="note.id" class="list-group-item flex-column align-items-start mb-2 shadow-sm">
 
                         <!-- Modo visualizacao -->
                         <div v-if="editingId !== note.id">
@@ -111,6 +133,7 @@
         </div>
     </footer>
 
+    <script src="../scripts/mood-colors.js"></script>
     <script src="../scripts/notes.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

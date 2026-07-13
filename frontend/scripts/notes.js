@@ -5,6 +5,17 @@ new Vue({
             text: '',
             mood: 'neutro'
         },
+        moods: [
+            { value: 'feliz',    icon: 'bi-emoji-smile' },
+            { value: 'amor',     icon: 'bi-emoji-heart-eyes' },
+            { value: 'calmo',    icon: 'bi-emoji-sunglasses' },
+            { value: 'surpresa', icon: 'bi-stars' },
+            { value: 'neutro',   icon: 'bi-emoji-neutral' },
+            { value: 'ansioso',  icon: 'bi-emoji-dizzy' },
+            { value: 'triste',   icon: 'bi-emoji-frown' },
+            { value: 'raiva',    icon: 'bi-emoji-angry' }
+        ],
+        moodFilter: 'todos',
         notes: [],
         moodTagsMap: {},
         userId: null,
@@ -22,8 +33,11 @@ new Vue({
         this.loadNotes();
     },
     computed: {
-        sortedNotes() {
-            return this.notes.slice().sort((a, b) => b.id - a.id);
+        filteredNotes() {
+            const list = this.moodFilter === 'todos'
+                ? this.notes
+                : this.notes.filter(n => n.moods && n.moods[0] && n.moods[0].title === this.moodFilter);
+            return list.slice().sort((a, b) => b.id - a.id);
         }
     },
     methods: {
@@ -105,6 +119,24 @@ new Vue({
                 return note.moods[0].emoji + ' ' + note.moods[0].title;
             }
             return '🤔 Sem humor';
+        },
+        moodColor(value) {
+            const c = window.MOOD_COLORS[value];
+            return c ? c.base : '#6C757D';
+        },
+        moodLabel(value) {
+            const c = window.MOOD_COLORS[value];
+            return c ? c.label : value;
+        },
+        moodBtnStyle(value) {
+            const c = window.MOOD_COLORS[value];
+            if (!c) return {};
+            const selected = this.newNote.mood === value;
+            return {
+                backgroundColor: selected ? c.base : window.moodSoftBg(value, 0.12),
+                color: selected ? c.text : c.base,
+                borderColor: c.base
+            };
         },
         startEdit(note) {
             this.editingId = note.id;

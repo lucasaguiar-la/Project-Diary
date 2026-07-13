@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -16,21 +14,22 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (moodTagRepository.count() > 0) return;
-
-        moodTagRepository.saveAll(List.of(
-            mood("feliz",   "😊"),
-            mood("neutro",  "😐"),
-            mood("triste",  "😢"),
-            mood("ansioso", "😟"),
-            mood("calmo",   "😌")
-        ));
+        ensureMood("feliz",    "😊");
+        ensureMood("neutro",   "😐");
+        ensureMood("triste",   "😢");
+        ensureMood("ansioso",  "😟");
+        ensureMood("calmo",    "😌");
+        ensureMood("raiva",    "😠");
+        ensureMood("amor",     "😍");
+        ensureMood("surpresa", "😲");
     }
 
-    private MoodTag mood(String title, String emoji) {
-        MoodTag tag = new MoodTag();
-        tag.setTitle(title);
-        tag.setEmoji(emoji);
-        return tag;
+    private void ensureMood(String title, String emoji) {
+        if (moodTagRepository.findByTitle(title).isEmpty()) {
+            MoodTag tag = new MoodTag();
+            tag.setTitle(title);
+            tag.setEmoji(emoji);
+            moodTagRepository.save(tag);
+        }
     }
 }
