@@ -5,6 +5,7 @@ new Vue({
         currentMonth: new Date().getMonth() + 1,
         moodsByDate: {},
         eventsByDate: {},
+        streakDates: [],
         selectedDay: null,
         newEventTitle: '',
         newEventTime: '',
@@ -42,7 +43,7 @@ new Vue({
                 const prevMonth = month - 1 === 0 ? 12 : month - 1;
                 const prevYear = month - 1 === 0 ? year - 1 : year;
                 const dateStr = `${prevYear}-${String(prevMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                cells.push({ day, dateStr, isCurrentMonth: false, isToday: false, mood: null, events: [] });
+                cells.push({ day, dateStr, isCurrentMonth: false, isToday: false, mood: null, events: [], isStreakDay: false });
             }
 
             // Days of current month
@@ -54,7 +55,8 @@ new Vue({
                     isCurrentMonth: true,
                     isToday: dateStr === todayStr,
                     mood: this.moodsByDate[dateStr] || null,
-                    events: this.eventsByDate[dateStr] || []
+                    events: this.eventsByDate[dateStr] || [],
+                    isStreakDay: this.streakDates.includes(dateStr)
                 });
             }
 
@@ -64,7 +66,7 @@ new Vue({
                 const nextMonth = month + 1 === 13 ? 1 : month + 1;
                 const nextYear = month + 1 === 13 ? year + 1 : year;
                 const dateStr = `${nextYear}-${String(nextMonth).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                cells.push({ day: d, dateStr, isCurrentMonth: false, isToday: false, mood: null, events: [] });
+                cells.push({ day: d, dateStr, isCurrentMonth: false, isToday: false, mood: null, events: [], isStreakDay: false });
             }
 
             return cells;
@@ -131,7 +133,14 @@ new Vue({
                 this.eventsByDate = map;
             });
 
-            Promise.all([moodsPromise, eventsPromise]).catch(err => {
+            const streakPromise = fetch(`/api/activities/user/${this.userId}/completed-dates?year=${y}&month=${m}`, {
+                headers: this.getAuthHeaders()
+            })
+            .then(res => this.handleFetch(res))
+            .then(res => res.json())
+            .then(dates => { this.streakDates = dates; });
+
+            Promise.all([moodsPromise, eventsPromise, streakPromise]).catch(err => {
                 this.errorMessage = err.message;
             });
         },
@@ -145,6 +154,7 @@ new Vue({
             this.selectedDay = null;
             this.moodsByDate = {};
             this.eventsByDate = {};
+            this.streakDates = [];
             this.loadMonthData();
         },
         nextMonth() {
@@ -157,6 +167,7 @@ new Vue({
             this.selectedDay = null;
             this.moodsByDate = {};
             this.eventsByDate = {};
+            this.streakDates = [];
             this.loadMonthData();
         },
         selectDay(cell) {
@@ -190,6 +201,7 @@ new Vue({
                 if (updatedCell) this.selectedDay = updatedCell;
                 this.newEventTitle = '';
                 this.newEventTime = '';
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('addEventModal')).hide();
             })
             .catch(err => { this.errorMessage = err.message; });
         },

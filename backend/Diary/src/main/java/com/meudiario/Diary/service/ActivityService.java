@@ -98,4 +98,10 @@ public class ActivityService {
         }
         return streak;
     }
+
+    public List<LocalDate> getCompletedDatesByMonth(int userId, int year, int month) {
+        return completionRepository.findDistinctCompletedDatesByUserId(userId).stream()
+                .filter(date -> date.getYear() == year && date.getMonthValue() == month)
+                .toList();
+    }
 }

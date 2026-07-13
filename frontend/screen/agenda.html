@@ -63,6 +63,7 @@
                                  }"
                                  @click="selectDay(cell)">
                                 <div class="small fw-semibold mb-1" :class="cell.isCurrentMonth ? '' : 'text-muted'">{{ cell.day }}</div>
+                                <i v-if="cell.isStreakDay" class="bi bi-fire streak-badge" title="Dia com atividade concluída"></i>
                                 <div v-if="cell.mood" class="text-center lh-1" style="font-size: 1rem;">{{ cell.mood.emoji }}</div>
                                 <div v-if="cell.events.length > 0" class="d-flex flex-wrap gap-1 mt-1">
                                     <span v-for="(e, i) in cell.events.slice(0, 3)" :key="i"
@@ -115,26 +116,44 @@
                                     </button>
                                 </li>
                             </ul>
-                        </div>
-
-                        <!-- Add event form -->
-                        <div>
-                            <small class="text-muted d-block mb-2">Adicionar compromisso</small>
-                            <form @submit.prevent="addEvent" class="d-flex flex-column gap-2">
-                                <input type="text" class="form-control form-control-sm"
-                                       v-model="newEventTitle" placeholder="Título do compromisso" required>
-                                <input type="time" class="form-control form-control-sm"
-                                       v-model="newEventTime">
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-plus-lg"></i> Salvar
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-sm btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#addEventModal">
+                                <i class="bi bi-plus-lg"></i> Adicionar compromisso
+                            </button>
                         </div>
 
                     </div>
                 </div>
             </div>
 
+        </div>
+
+        <!-- Add Event Modal -->
+        <div class="modal fade" id="addEventModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form @submit.prevent="addEvent">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Adicionar compromisso</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" v-model="newEventTitle"
+                                       placeholder="Título do compromisso" required>
+                            </div>
+                            <div>
+                                <input type="time" class="form-control" v-model="newEventTime">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-plus-lg"></i> Salvar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

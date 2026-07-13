@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -51,5 +52,13 @@ public class ActivityController {
     @GetMapping("/user/{userId}/streak")
     public ResponseEntity<Map<String, Integer>> getStreak(@PathVariable int userId) {
         return ResponseEntity.ok(Map.of("streak", activityService.getStreak(userId)));
+    }
+
+    @GetMapping("/user/{userId}/completed-dates")
+    public ResponseEntity<List<LocalDate>> getCompletedDates(
+            @PathVariable int userId,
+            @RequestParam int year,
+            @RequestParam int month) {
+        return ResponseEntity.ok(activityService.getCompletedDatesByMonth(userId, year, month));
     }
 }

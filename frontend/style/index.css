@@ -272,3 +272,14 @@ body {
         transition: none;
     }
 }
+
+.calendar-cell {
+    position: relative;
+}
+.streak-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    color: #fd7e14;
+    font-size: 0.7rem;
+}
