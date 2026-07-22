@@ -76,6 +76,11 @@ new Vue({
             const date = new Date(dateStr);
             return date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
         },
+        formatTime(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        },
         cardStyle(entry) {
             const title = entry.moods && entry.moods[0] ? entry.moods[0].title : null;
             const c = title ? window.MOOD_COLORS[title] : null;
