@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista - Diário de Emoções</title>
+    <link rel="shortcut icon" href="../images/main-logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../style/index.css">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+<body>
+    <!-- Sidebar compartilhada (injetada) -->
+    <div id="sidebar-root"></div>
+    <script src="../scripts/sidebar.js"></script>
+
+    <!-- Shared List Section -->
+    <div id="app" class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <a :href="backUrl" class="btn btn-sm btn-link text-decoration-none px-0 mb-2">
+                    <i class="bi bi-arrow-left"></i> Voltar ao grupo
+                </a>
+
+                <div v-if="errorMessage" class="alert alert-danger alert-dismissible mb-3" role="alert">
+                    {{ errorMessage }}
+                    <button type="button" class="btn-close" @click="errorMessage = ''"></button>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title mb-0">Itens da lista</h5>
+                            <div class="d-flex gap-2">
+                                <a :href="historyUrl" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-clock-history"></i> Ver histórico
+                                </a>
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div v-if="items.length === 0" class="text-center text-muted py-3">
+                            <i class="bi bi-clipboard" style="font-size: 2rem;"></i>
+                            <p class="mt-2 mb-0">Nenhum item nesta lista ainda.</p>
+                        </div>
+
+                        <div class="list-group list-group-flush">
+                            <div v-for="item in items" :key="item.id"
+                                 class="list-group-item d-flex align-items-center justify-content-between px-0">
+                                <div class="d-flex align-items-center gap-2 flex-grow-1" style="min-width: 0;">
+                                    <i :class="item.completedToday ? 'bi bi-check-circle-fill text-success' : 'bi bi-circle text-secondary'"
+                                       style="font-size: 1.25rem;"></i>
+                                    <span class="text-truncate" :class="item.completedToday ? 'text-decoration-line-through text-muted' : ''">
+                                        {{ item.title }}
+                                    </span>
+                                </div>
+                                <div class="d-flex gap-2 flex-shrink-0">
+                                    <button @click="toggleItem(item)"
+                                            :class="item.completedToday ? 'btn btn-sm btn-success' : 'btn btn-sm btn-outline-secondary'">
+                                        {{ item.completedToday ? 'Feito' : 'Marcar' }}
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" @click="deleteItem(item.id)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Item Modal -->
+        <div class="modal fade" id="addItemModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form @submit.prevent="addItem">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Novo Item</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" class="form-control" v-model="newItemTitle"
+                                   placeholder="Ex: Lavar a louça, Comprar pão..." required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="text-center">
+                    <p class="mb-0">Diary&copy;2026</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/shared-list.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

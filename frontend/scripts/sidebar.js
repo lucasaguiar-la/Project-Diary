@@ -7,7 +7,8 @@
         { href: 'mood-history.html', label: 'Humor',     icon: 'bi-graph-up' },
         { href: 'dashboard.html',    label: 'Dashboard', icon: 'bi-fire' },
         { href: 'agenda.html',       label: 'Agenda',    icon: 'bi-calendar3' },
-        { href: 'water.html',        label: 'Água',      icon: 'bi-droplet-fill' }
+        { href: 'water.html',        label: 'Água',      icon: 'bi-droplet-fill' },
+        { href: 'groups.html',       label: 'Grupos',    icon: 'bi-people' }
     ];
 
     var current = window.location.pathname.split('/').pop() || '';

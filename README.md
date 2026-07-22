@@ -25,6 +25,7 @@ Meu Diário é uma aplicação fullstack de diário de emoções. Permite regist
 - Dashboard de hábitos: cadastro de atividades diárias, sequência de dias consecutivos ("Constância"), pendências do dia e total de hábitos cadastrados
 - Agenda com calendário mensal, mostrando humor do dia, compromissos e dias em que a sequência de hábitos foi mantida
 - Controle de hidratação: registro de garrafas bebidas no dia, meta diária configurável (em litros ou garrafas) e visualização em uma garrafa que enche conforme a meta é atingida
+- Grupos com listas de tarefas compartilhadas: criação de grupos com código de convite, N listas por grupo, itens com conclusão diária (reset implícito, sem apagar histórico) e uma página de histórico por lista mostrando quem concluiu cada item, em que data e horário
 - Navegação por barra lateral fixa no desktop (expande ao passar o mouse) e menu colapsável no mobile
 - Interface responsiva, testada em telas de smartphone, tablet e desktop
 
@@ -78,7 +79,11 @@ Project-Diary/
 │   │   ├── mood-history.html     # histórico de humor
 │   │   ├── dashboard.html        # hábitos e sequência de dias
 │   │   ├── agenda.html           # calendário
-│   │   └── water.html            # controle de hidratação
+│   │   ├── water.html            # controle de hidratação
+│   │   ├── groups.html           # grupos do usuário
+│   │   ├── group.html            # detalhe do grupo (membros e listas)
+│   │   ├── shared-list.html      # checklist da lista compartilhada
+│   │   └── shared-list-history.html  # histórico de conclusões da lista
 │   └── scripts/
 │       ├── sidebar.js            # navegação compartilhada (injetada em todas as páginas autenticadas)
 │       ├── mood-colors.js        # paleta de cores por emoção (compartilhada)
@@ -176,6 +181,17 @@ Authorization: Bearer <token>
 | Hábitos | `GET/POST/DELETE /api/activities`, `POST /api/activities/{id}/complete`, `GET /api/activities/user/{userId}/streak`, `GET /api/activities/user/{userId}/completed-dates?year=&month=` |
 | Agenda | `GET/POST/PUT/DELETE /api/events`, `GET /api/events/user/{userId}?year=&month=` |
 | Água | `GET /api/water/user/{userId}`, `POST /api/water/increment`, `POST /api/water/decrement`, `GET /api/water/user/{userId}/history` |
+| Grupos | `GET /api/groups/user/{userId}`, `GET /api/groups/{groupId}`, `POST /api/groups`, `POST /api/groups/join`, `GET /api/groups/{groupId}/members` |
+| Listas compartilhadas | `GET /api/shared-lists/group/{groupId}`, `POST /api/shared-lists`, `GET /api/shared-lists/{listId}/items`, `POST /api/shared-lists/items`, `DELETE /api/shared-lists/items/{itemId}`, `POST /api/shared-lists/items/{itemId}/complete`, `DELETE /api/shared-lists/items/{itemId}/complete/today`, `GET /api/shared-lists/{listId}/history` |
+
+## Backlog
+
+Funcionalidades planejadas para os próximos ciclos, ainda não implementadas:
+
+- Compartilhar histórico de humor entre membros de um grupo (só a emoção/cor, nunca o conteúdo da nota).
+- Compartilhar a constância (sequência de dias) de hábitos entre membros de um grupo (só o número, sem nomes ou quantidade de atividades).
+- Compartilhar meta e quantidade de água entre membros de um grupo — requer migrar a meta diária (hoje só em `localStorage`) para um campo persistido no backend.
+- Aviso in-app de "beba mais água" entre membros de um grupo, limitado a 1 notificação por dia por destinatário.
 
 ## Licença
 
