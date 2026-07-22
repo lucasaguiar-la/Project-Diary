@@ -1,4 +1,32 @@
 (function () {
+    function isSessionExpired() {
+        var token = localStorage.getItem('jwtToken');
+        if (!token) return true;
+        try {
+            var payload = JSON.parse(atob(token.split('.')[1]));
+            if (!payload.exp) return false;
+            return Date.now() >= payload.exp * 1000;
+        } catch (e) {
+            return true;
+        }
+    }
+
+    function redirectToLoginIfExpired() {
+        if (isSessionExpired()) {
+            localStorage.removeItem('jwtToken');
+            localStorage.removeItem('userId');
+            if (!window.location.pathname.endsWith('login.html')) {
+                window.location.href = 'login.html';
+            }
+        }
+    }
+
+    redirectToLoginIfExpired();
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') redirectToLoginIfExpired();
+    });
+    window.addEventListener('focus', redirectToLoginIfExpired);
+
     var root = document.getElementById('sidebar-root');
     if (!root) return;
 

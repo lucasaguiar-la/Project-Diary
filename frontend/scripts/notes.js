@@ -29,6 +29,10 @@ new Vue({
             window.location.href = 'login.html';
             return;
         }
+        const draftText = localStorage.getItem('noteDraftText');
+        if (draftText) this.newNote.text = draftText;
+        const draftMood = localStorage.getItem('noteDraftMood');
+        if (draftMood) this.newNote.mood = draftMood;
         this.loadMoods();
         this.loadNotes();
     },
@@ -38,6 +42,18 @@ new Vue({
                 ? this.notes
                 : this.notes.filter(n => n.moods && n.moods[0] && n.moods[0].title === this.moodFilter);
             return list.slice().sort((a, b) => b.id - a.id);
+        }
+    },
+    watch: {
+        'newNote.text'(value) {
+            if (value) {
+                localStorage.setItem('noteDraftText', value);
+            } else {
+                localStorage.removeItem('noteDraftText');
+            }
+        },
+        'newNote.mood'(value) {
+            localStorage.setItem('noteDraftMood', value);
         }
     },
     methods: {
@@ -106,6 +122,8 @@ new Vue({
                 this.notes.push(savedNote);
                 this.newNote.text = '';
                 this.newNote.mood = 'neutro';
+                localStorage.removeItem('noteDraftText');
+                localStorage.removeItem('noteDraftMood');
             })
             .catch(err => { this.errorMessage = err.message; });
         },
