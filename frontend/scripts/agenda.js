@@ -43,18 +43,20 @@ new Vue({
                 const prevMonth = month - 1 === 0 ? 12 : month - 1;
                 const prevYear = month - 1 === 0 ? year - 1 : year;
                 const dateStr = `${prevYear}-${String(prevMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                cells.push({ day, dateStr, isCurrentMonth: false, isToday: false, mood: null, events: [], isStreakDay: false });
+                cells.push({ day, dateStr, isCurrentMonth: false, isToday: false, mood: null, moods: [], events: [], isStreakDay: false });
             }
 
             // Days of current month
             for (let d = 1; d <= daysInMonth; d++) {
                 const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const moods = this.moodsByDate[dateStr] || [];
                 cells.push({
                     day: d,
                     dateStr,
                     isCurrentMonth: true,
                     isToday: dateStr === todayStr,
-                    mood: this.moodsByDate[dateStr] || null,
+                    moods: moods,
+                    mood: moods.length ? moods[moods.length - 1] : null,
                     events: this.eventsByDate[dateStr] || [],
                     isStreakDay: this.streakDates.includes(dateStr)
                 });
@@ -66,7 +68,7 @@ new Vue({
                 const nextMonth = month + 1 === 13 ? 1 : month + 1;
                 const nextYear = month + 1 === 13 ? year + 1 : year;
                 const dateStr = `${nextYear}-${String(nextMonth).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                cells.push({ day: d, dateStr, isCurrentMonth: false, isToday: false, mood: null, events: [], isStreakDay: false });
+                cells.push({ day: d, dateStr, isCurrentMonth: false, isToday: false, mood: null, moods: [], events: [], isStreakDay: false });
             }
 
             return cells;
@@ -111,10 +113,11 @@ new Vue({
                 const map = {};
                 data.forEach(entry => {
                     const dateStr = entry.createdAt.substring(0, 10);
-                    if (!map[dateStr] && entry.moods && entry.moods.length > 0) {
-                        map[dateStr] = entry.moods[0];
-                    }
+                    if (!entry.moods || entry.moods.length === 0) return;
+                    if (!map[dateStr]) map[dateStr] = [];
+                    map[dateStr].push({ ...entry.moods[0], createdAt: entry.createdAt });
                 });
+                Object.keys(map).forEach(d => map[d].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)));
                 this.moodsByDate = map;
             });
 

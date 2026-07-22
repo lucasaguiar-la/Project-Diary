@@ -64,7 +64,9 @@
                                  @click="selectDay(cell)">
                                 <div class="small fw-semibold mb-1 cell-day-number" :class="cell.isCurrentMonth ? '' : 'text-muted'">{{ cell.day }}</div>
                                 <i v-if="cell.isStreakDay" class="bi bi-fire streak-badge" title="Dia com atividade concluída"></i>
-                                <div v-if="cell.mood" class="text-center lh-1 cell-mood-emoji">{{ cell.mood.emoji }}</div>
+                                <div v-if="cell.mood" class="text-center lh-1 cell-mood-emoji">
+                                    {{ cell.mood.emoji }}<span v-if="cell.moods.length > 1" class="mood-count-badge">+{{ cell.moods.length - 1 }}</span>
+                                </div>
                                 <div v-if="cell.events.length > 0" class="d-flex flex-wrap gap-1 mt-1">
                                     <span v-for="(e, i) in cell.events.slice(0, 3)" :key="i" class="cell-event-dot"></span>
                                 </div>
@@ -92,10 +94,12 @@
                         <!-- Mood -->
                         <div class="mb-3">
                             <small class="text-muted d-block mb-1">Humor</small>
-                            <span v-if="selectedDay.mood" class="d-flex align-items-center gap-2">
-                                <span style="font-size: 1.5rem;">{{ selectedDay.mood.emoji }}</span>
-                                <span class="text-capitalize">{{ selectedDay.mood.title }}</span>
-                            </span>
+                            <div v-if="selectedDay.moods && selectedDay.moods.length > 0" class="d-flex flex-column gap-2">
+                                <div v-for="(m, i) in selectedDay.moods" :key="i" class="d-flex align-items-center gap-2">
+                                    <span style="font-size: 1.5rem;">{{ m.emoji }}</span>
+                                    <span class="text-capitalize">{{ m.title }}</span>
+                                </div>
+                            </div>
                             <span v-else class="text-muted small">Nenhum humor registrado neste dia.</span>
                         </div>
 

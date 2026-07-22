@@ -286,6 +286,12 @@ body {
 .cell-mood-emoji {
     font-size: 1rem;
 }
+.mood-count-badge {
+    font-size: 0.55rem;
+    color: #6c757d;
+    vertical-align: top;
+    margin-left: 1px;
+}
 .cell-event-dot {
     display: inline-block;
     width: 6px;
